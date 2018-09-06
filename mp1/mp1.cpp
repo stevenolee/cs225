@@ -10,6 +10,10 @@ using cs225::HSLAPixel;
 
 void rotate(std::string inputFile, std::string outputFile) {
   // TODO: Part 2
+
+	cs225::PNG: input, output;
+	
+	
 }
 
 PNG myArt(unsigned int width, unsigned int height) {
