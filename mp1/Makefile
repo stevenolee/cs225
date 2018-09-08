@@ -1,4 +1,5 @@
 CXX = clang++	
+LD = clang++
 CXXFLAGS = $(CS225) -std=c++1y -stdlib=libc++ -c -g -O0 -Wall -Wextra -pedantic
 LDFLAGS = -std=c++1y -stdlib=libc++ -lpthread -lm
 OBJS = main.o PNG.o HSLAPixel.o lodepng.o mp1.o
@@ -22,10 +23,10 @@ lodepng.o : cs225/lodepng/lodepng.cpp cs225/lodepng/lodepng.h
 	$(CXX) $(CXXFLAGS) cs225/lodepng/lodepng.cpp
 
 test : unit_tests.o mp1.o PNG.o HSLAPixel.o lodepng.o
-    $(LD) unit_tests.o mp1.o PNG.o HSLAPixel.o lodepng.o $(LDFLAGS) -o test
+	$(LD) unit_tests.o mp1.o PNG.o HSLAPixel.o lodepng.o $(LDFLAGS) -o test
 
 unit_tests.o : tests/unit_tests.cpp tests/catch.hpp cs225/PNG.h cs225/HSLAPixel.h
-    $(CXX) $(CXXFLAGS) tests/unit_tests.cpp
+	$(CXX) $(CXXFLAGS) tests/unit_tests.cpp
 
 clean: 
 	-rm -f *.o mp1
