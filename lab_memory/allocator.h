@@ -26,6 +26,9 @@ class Allocator
      */
     Allocator(const string& studentFile, const string& roomFile);
 
+// destructor
+	~Allocator();
+
 
     /**
      * Calls the solving routine to allocate student letter
@@ -90,7 +93,7 @@ class Allocator
     Room* rooms;
 
     /** Size of the rooms array */
-    int roomCount;
+    int 																																																																																																																																																																																																																																																																																																																																																																																																																																								roomCount;
 
     /** Total number of students */
     int studentCount;

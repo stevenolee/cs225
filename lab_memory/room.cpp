@@ -17,6 +17,7 @@ Room::Room(const string& init_name, int init_capacity)
       max_letters(26),
       letterCount(0)
 {
+// BUG
     letters = new Letter[max_letters];
 }
 
@@ -41,8 +42,11 @@ Room::~Room()
 
 void Room::addLetter(const Letter& L)
 {
-    letters[letterCount++] = L;
-    count += L.count;
+	if (letterCount < max_letters){
+		letters[letterCount] = L;
+		letterCount++;
+   		count += L.count;
+	}
 }
 
 int Room::spaceRemaining()
@@ -60,9 +64,13 @@ void Room::print(std::ostream & stream /* = std::cout */)
 
 void Room::clear()
 {
-    if (letters != NULL)
+	if(letters != NULL){
+	        delete [] letters;
+		letters = NULL;
+	}
+	else
+		delete letters;
 
-        delete letters;
 }
 
 void Room::copy(const Room& other)
@@ -71,6 +79,10 @@ void Room::copy(const Room& other)
     capacity = other.capacity;
     count = other.count;
     letterCount = other.letterCount;
-    letters = other.letters;
+	max_letters = other.max_letters;
+    letters = new Letter[max_letters];
+	for (int i = 0; i < max_letters; i++){
+		letters[i] = other.letters[i];
+	}
 
 }
