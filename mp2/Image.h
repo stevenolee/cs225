@@ -5,10 +5,11 @@
 
 #pragma once
 #include "cs225/PNG.h"
+#include "cs225/HSLAPixel.h"
 using cs225::PNG;
+using cs225::HSLAPixel;
 
-
-class Image{
+class Image : public cs225::PNG{
 	public:
 		void lighten();
 		void lighten(double amount);
@@ -24,5 +25,5 @@ class Image{
 		void scale(double factor);
 		void scale(unsigned w, unsigned h);
 
-}
+};
 
