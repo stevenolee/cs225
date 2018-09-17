@@ -193,13 +193,39 @@ for
 	int height = this->height();
 	int newWidth = width * factor;
 	int newHeight = height * factor;
-	PNG newImage = new PNG(this);
-	newImage.size(newWidth, newHeight);
+	PNG newImage(newWidth, newHeight);
 	
-	
+	for (int i = 0; i < newWidth; i++){
+		for (int j = 0; j < newHeight; j++){		
+			double  percentWidth = (double)i / (double)newWidth;
+			double percentHeight = (double)j / (double)newHeight;
+			int interWidth = (width) * percentWidth;
+			int interHeight = (height) * percentHeight;
+			HSLAPixel & pixelOriginal = this->getPixel(interWidth, interHeight);
+			HSLAPixel & pixelNew = newImage.getPixel(i, j);
+			pixelNew.h = pixelOriginal.h;
+			pixelNew.s = pixelOriginal.s;
+			pixelNew.l = pixelOriginal.l;
+			pixelNew.a = pixelOriginal.a;
+		}
+	}
+// resize original PNG and copy the new PNG over
 
 
+	this->resize(newWidth, newHeight);
+cout<<"width "<<this->width()<<endl;
+cout<<"height "<<this->height()<<endl;
 
+	for (int i = 0; i < newWidth; i++){
+		for (int j = 0; j < newHeight; j++){	
+			HSLAPixel & copyee = newImage.getPixel(i, j);
+			HSLAPixel & copyer = this->getPixel(i, j);
+			copyer.h = copyee.h;
+			copyer.s = copyee.s;
+			copyer.l = copyee.l;
+			copyer.a = copyee.a;
+		}		
+	}
 
 
 
@@ -208,6 +234,12 @@ for
 void Image::scale(unsigned w, unsigned h){
 // scale the image based on given width and height
 //	resize(w, h);
+	double aspectw = w / this->width();
+	double aspecth = h / this->height();
+	if (aspectw < aspecth)
+		this->scale(aspectw);
+	else
+		this->scale(aspecth);
+	this->resize(w, h);
+
 }
-
-
