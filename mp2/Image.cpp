@@ -1,8 +1,10 @@
 #include "Image.h"
 #include "cs225/PNG.h"
 #include "cs225/HSLAPixel.h"
+#include <iostream>
 using cs225::PNG;
 using cs225::HSLAPixel;
+using namespace std;
 
 void Image::lighten(){
 // increase luminance by 0.1
@@ -12,8 +14,9 @@ void Image::lighten(){
 	for (int i = 0; i < width; i++){
 		for (int j = 0; j < height; j++){
 			HSLAPixel & pixel = this->getPixel(i, j);
-			if (pixel.l <= 0.9)
 				pixel.l += 0.1;
+				if (pixel.l > 1.0)
+					pixel.l = 1.0;
 		}
 	}
 }
@@ -25,8 +28,10 @@ void Image::lighten(double amount){
 	for (int i = 0; i < width; i++){
 		for (int j = 0; j < height; j++){
 			HSLAPixel & pixel = this->getPixel(i, j);
-			if (pixel.l + amount <= 1.0)
 				pixel.l += amount;
+				if (pixel.l > 1.0)
+					pixel.l = 1.0;
+
 		}
 	}
 }
@@ -38,8 +43,9 @@ void Image::darken(){
 	for (int i = 0; i < width; i++){
 		for (int j = 0; j < height; j++){
 			HSLAPixel & pixel = this->getPixel(i, j);
-			if (pixel.l >= 0.1)
 				pixel.l -= 0.1;
+					if (pixel.l < 0.0)
+						pixel.l = 0.0;
 		}
 	}
 }
@@ -51,8 +57,9 @@ void Image::darken(double amount){
 	for (int i = 0; i < width; i++){
 		for (int j = 0; j < height; j++){
 			HSLAPixel & pixel = this->getPixel(i, j);
-			if (pixel.l - amount >= 0)
 				pixel.l -= amount;
+					if (pixel.l < 0)
+						pixel.l = 0.0;
 		}
 	}
 }
@@ -133,30 +140,74 @@ void Image::rotateColor(double degrees){
 	for (int i = 0; i < width; i++){
 		for (int j = 0; j < height; j++){
 			HSLAPixel & pixel = this->getPixel(i, j);
-			int current = pixel.h;
-			if (current + degrees <= 360)
-				current += degrees;
-			else {
-				current += degrees;
-				while (current > 360){
-					current -= 360;
-				}
-			}
+			int hue = pixel.h + degrees;
+			if (hue >= 360)
+				hue = (double)(hue % 360);
+			if (hue <0)
+				hue += 360;
+			pixel.h = hue;
 		}
 	}
 }
 
-void virtual Image::illinify(){
+
+void Image::illinify(){
+	unsigned x, y;
+	for (x = 0; x < this->width(); x++){
+		for (y = 0; y < this->height(); y++){
+			HSLAPixel & pixel = this->getPixel(x, y);
+			
+			if ((pixel.h > 113.5) && (pixel.h < 293.5)){
+							pixel.h = 216;
+			}
+			else {
+			pixel.h = 11; }
+		}
+	}
 }
 
 void Image::scale(double factor){
 // scale the image by the given factor
+/*
+make copy of *this
+save the original width and height
+multiply dimensions by factor and save into new unsigned
+resize(newwidth, newheight)
+if (new width > original width)
+for
+	for 
+		if (new width < original width)
+			// scaling
+			for 
+				for
+
+
+// multiply the for loop counters i and j by factor
+
+*/
+	
+// make a new PNG with new dimensions
+
+
+	int width = this->width();
+	int height = this->height();
+	int newWidth = width * factor;
+	int newHeight = height * factor;
+	PNG newImage = new PNG(this);
+	newImage.size(newWidth, newHeight);
+	
+	
+
+
+
+
+
 
 }
 
 void Image::scale(unsigned w, unsigned h){
 // scale the image based on given width and height
-
+//	resize(w, h);
 }
 
 
