@@ -88,6 +88,17 @@ Truck::~Truck()
     clear();
 }
 
+void Truck::draw(PNG* canvas) const{	
+	trailer -> draw(canvas);
+    	cabin -> draw(canvas);
+   	engine -> draw(canvas);
+    	window -> draw(canvas);
+	for (int i = 0; i < NUM_WHEELS; i++){
+		wheels[i] -> draw(canvas);
+	}
+	
+}
+
 Truck& Truck::operator=(const Truck& rhs)
 {
     if (this == &rhs) {
