@@ -93,13 +93,13 @@ bool StickerSheet::translate(unsigned index, unsigned x, unsigned y){
 
 void StickerSheet::removeSticker(unsigned index){
 // DO I NEED A "DELETE"
-	while (index < max_stickers - 1){
+
+	for (unsigned i = index; i < max_stickers - 1; i++){
 		if (stickers[index + 1] != NULL){
 			stickers[index] = stickers[index + 1];
 		} else {
 			stickers[index] = NULL;
 		}
-		index++;
 	}
 // set the last layer to NULL
 	stickers[max_stickers - 1] = NULL;	
