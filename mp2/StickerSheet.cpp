@@ -93,18 +93,6 @@ void StickerSheet::changeMaxStickers(unsigned max){
 	stickers = new_stickers;
 	new_stickers = NULL;
 	delete[] pointer;
-/*
-
-
-	for (unsigned i = 0; i < max_stickers; i++){
-		if  ((i >= previous_max) || (stickers[i] = NULL)){
-			new_stickers[i] = NULL;
-		} else {
-			new_stickers[i] = stickers[i];
-		}
-	}
-	stickers = new_stickers;
-*/
 }
 
 int StickerSheet::addSticker(Image &sticker, unsigned x, unsigned y){
@@ -131,14 +119,21 @@ void StickerSheet::removeSticker(unsigned index){
 // DO I NEED A "DELETE"
 
 	for (unsigned i = index; i < max_stickers - 1; i++){
+// iterate through the stickers array
 		if (stickers[index + 1] != NULL){
 			stickers[index] = stickers[index + 1];
+			x_coordinate[index] = x_coordinate[index+1];
+			y_coordinate[index] = y_coordinate[index+1];
 		} else {
 			stickers[index] = NULL;
+			x_coordinate[index] = 0;
+			y_coordinate[index] = 0;
 		}
 	}
 // set the last layer to NULL
 	stickers[max_stickers - 1] = NULL;	
+	x_coordinate[max_stickers - 1] = 0;
+	y_coordinate[max_stickers - 1] = 0;
 }
 
 Image *StickerSheet::getSticker(unsigned index) const{
