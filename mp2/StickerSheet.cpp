@@ -75,14 +75,14 @@ void StickerSheet::changeMaxStickers(unsigned max){
 
 // if longer
 	if (max_stickers > previous_max) {
-		for (unsigned i = smaller - 1; i < max_stickers; i++){
+		for (unsigned i = smaller; i < max_stickers; i++){
 			new_stickers[i] = NULL;
 		}
 	}
 
 // if shorter
 	if (max_stickers < previous_max) {
-		for (unsigned i = smaller - 1; i < previous_max; i++){
+		for (unsigned i = smaller; i < previous_max; i++){
 				stickers[i] = NULL;
 				delete stickers[i];
 		}
@@ -97,7 +97,7 @@ void StickerSheet::changeMaxStickers(unsigned max){
 
 
 	for (unsigned i = 0; i < max_stickers; i++){
-		if ((i >= previous_max) || (stickers[i] = NULL)){
+		if  ((i >= previous_max) || (stickers[i] = NULL)){
 			new_stickers[i] = NULL;
 		} else {
 			new_stickers[i] = stickers[i];
