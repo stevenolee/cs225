@@ -1,4 +1,5 @@
 #include "StickerSheet.h"
+#include <algorithm>
 
 using namespace std;
 
@@ -56,19 +57,54 @@ const StickerSheet& StickerSheet::operator=(const StickerSheet &other){
 	return *this;
 }
 
+void StickerSheet::deepCopyHelper(){
+
+}
 
 void StickerSheet::changeMaxStickers(unsigned max){
 	unsigned previous_max = max_stickers;
 	max_stickers = max;
-	Image** new_sheet = new Image* [max_stickers];
-	for (unsigned i = 0; i < max_stickers; i++){
-		if ((i >= previous_max) || (stickers[i] = NULL)){
-			new_sheet[i] = NULL;
-		} else {
-			new_sheet[i] = stickers[i];
+	Image** new_stickers = new Image* [max_stickers];
+//	unsigned smaller = (unsigned)min((int)max_stickers, (int)previous_max);
+	unsigned smaller = (previous_max < max_stickers) ? previous_max : max_stickers;
+
+// DEEP copy what you can
+	for (unsigned i = 0; i < smaller; i++){
+		new_stickers[i] = stickers[i];
+	}
+
+// if longer
+	if (max_stickers > previous_max) {
+		for (unsigned i = smaller - 1; i < max_stickers; i++){
+			new_stickers[i] = NULL;
 		}
 	}
-	stickers = new_sheet;
+
+// if shorter
+	if (max_stickers < previous_max) {
+		for (unsigned i = smaller - 1; i < previous_max; i++){
+				stickers[i] = NULL;
+				delete stickers[i];
+		}
+	}
+
+// route the pointers
+	Image** pointer = stickers;
+	stickers = new_stickers;
+	new_stickers = NULL;
+	delete[] pointer;
+/*
+
+
+	for (unsigned i = 0; i < max_stickers; i++){
+		if ((i >= previous_max) || (stickers[i] = NULL)){
+			new_stickers[i] = NULL;
+		} else {
+			new_stickers[i] = stickers[i];
+		}
+	}
+	stickers = new_stickers;
+*/
 }
 
 int StickerSheet::addSticker(Image &sticker, unsigned x, unsigned y){

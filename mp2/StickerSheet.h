@@ -20,6 +20,7 @@ class StickerSheet {
 		void removeSticker (unsigned index);
 		Image *	getSticker (unsigned index) const;
 		Image render () const;
+		void deepCopyHelper();
 
 // my copy function
 		Image copy_StickerSheet();
