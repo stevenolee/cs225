@@ -16,6 +16,10 @@ StickerSheet::StickerSheet(const Image &picture, unsigned max){
 }
 
 void StickerSheet::_destroy(){
+/*	for (unsigned i = 0; i < max_stickers; i++){
+		delete stickers[i];
+
+	}*/
 	delete[] x_coordinate;
 	delete[] y_coordinate;
 	delete[] stickers;
@@ -58,12 +62,13 @@ void StickerSheet::changeMaxStickers(unsigned max){
 	max_stickers = max;
 	Image** new_sheet = new Image* [max_stickers];
 	for (unsigned i = 0; i < max_stickers; i++){
-		if (i >= previous_max){
+		if ((i >= previous_max) || (stickers[i] = NULL)){
 			new_sheet[i] = NULL;
 		} else {
 			new_sheet[i] = stickers[i];
 		}
 	}
+	stickers = new_sheet;
 }
 
 int StickerSheet::addSticker(Image &sticker, unsigned x, unsigned y){
@@ -71,7 +76,6 @@ int StickerSheet::addSticker(Image &sticker, unsigned x, unsigned y){
 	unsigned count = 0;
 // find where the most recent sticker is
 	while (stickers[count] != NULL){count++;}
-	count++;
 	stickers[count] = &sticker;
 	x_coordinate[count] = x;
 	y_coordinate[count] = y;
@@ -112,6 +116,7 @@ Image StickerSheet::render() const{
 	Image finalImage = myImage;
 // add the stickers
 	for (unsigned i = 0; i < max_stickers; i++){
+		if (stickers[i] == NULL){break;}
 // x and y coordinates of sticker
 		unsigned x = x_coordinate[i];
 		unsigned y = y_coordinate[i];
@@ -127,11 +132,11 @@ Image StickerSheet::render() const{
 		if (y + height > finalImage.height()){
 			finalImage.resize(x, y + height);
 		}
-		for (; x < width; x++){
-			for (; y < height; y++){
+		for (unsigned counter1 = 0; counter1 < width; counter1++){
+			for (unsigned counter2 = 0; counter2 < height; counter2++){
 // pixel at the x, y coordinates for base image and sticker
-				HSLAPixel& image_pixel = finalImage.getPixel(x, y);
-				HSLAPixel& sticker_pixel = stick->getPixel(x, y);
+				HSLAPixel& image_pixel = finalImage.getPixel(x + counter1, y + counter2);
+				HSLAPixel& sticker_pixel = stick->getPixel(counter1, counter2);
 				if (sticker_pixel.a == 0){continue;}
 				image_pixel.h = sticker_pixel.h;
 				image_pixel.s = sticker_pixel.s;
