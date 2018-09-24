@@ -12,8 +12,7 @@ TEST_CASE("A basic StickerSheet works", "[weight=5][part=2]") {
 
   StickerSheet sheet(alma, 5);
   sheet.addSticker(i, 20, 200);
-//
-sheet.render().writeToFile("tests/jelloo.png");
+
   Image expected;
   expected.readFromFile("tests/expected.png");
 

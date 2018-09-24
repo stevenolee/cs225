@@ -1,5 +1,5 @@
 #include "StickerSheet.h"
-#include <algorithm>
+#include <iostream>
 
 using namespace std;
 
@@ -22,8 +22,11 @@ void StickerSheet::_destroy(){
 
 	}*/
 	delete[] x_coordinate;
+	x_coordinate = NULL;
 	delete[] y_coordinate;
+	y_coordinate = NULL;
 	delete[] stickers;
+	stickers = NULL;
 }
 
 void StickerSheet::_copy(const StickerSheet &other){
@@ -57,15 +60,10 @@ const StickerSheet& StickerSheet::operator=(const StickerSheet &other){
 	return *this;
 }
 
-void StickerSheet::deepCopyHelper(){
-
-}
-
 void StickerSheet::changeMaxStickers(unsigned max){
 	unsigned previous_max = max_stickers;
 	max_stickers = max;
 	Image** new_stickers = new Image* [max_stickers];
-//	unsigned smaller = (unsigned)min((int)max_stickers, (int)previous_max);
 	unsigned smaller = (previous_max < max_stickers) ? previous_max : max_stickers;
 
 // DEEP copy what you can
@@ -117,7 +115,6 @@ bool StickerSheet::translate(unsigned index, unsigned x, unsigned y){
 
 void StickerSheet::removeSticker(unsigned index){
 // DO I NEED A "DELETE"
-
 	for (unsigned i = index; i < max_stickers - 1; i++){
 // iterate through the stickers array
 		if (stickers[index + 1] != NULL){
