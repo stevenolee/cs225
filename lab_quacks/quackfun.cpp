@@ -25,9 +25,19 @@ namespace QuackFun {
 template <typename T>
 T sum(stack<T>& s)
 {
+	T sum = 0;
+	if (s.empty()){
+		return 0;
+	}
 
-    // Your code here
-    return T(); // stub return value (0 for primitive types). Change this!
+	T value = s.top();
+	s.pop();
+	sum += value + QuackFun::sum(s);
+	s.push(value);
+	return sum;
+
+	
+//    return T(); // stub return value (0 for primitive types). Change this!
                 // Note: T() is the default value for objects, and 0 for
                 // primitive types
 }
@@ -51,9 +61,33 @@ T sum(stack<T>& s)
  */
 bool isBalanced(queue<char> input)
 {
+//	char open = "[";
+// char close = "]";
+
+	stack<char> count;
+	if (!input.empty() && input.front() == ']'){return false;}
+
+	while (!input.empty()){
+// if open bracket
+		if (input.front() == '['){
+			count.push('[');
+			input.pop();
+		} else if (input.front() == ']') {
+// if close bracket
+			if (count.empty()){return false;}
+				count.pop();
+				input.pop();
+		} else {
+// if character
+			input.pop();
+		}
+	}	
 
     // @TODO: Make less optimistic
-    return true;
+	if (count.empty()){
+	    return true;
+	}
+	return false;
 }
 
 /**
@@ -71,10 +105,35 @@ bool isBalanced(queue<char> input)
 template <typename T>
 void scramble(queue<T>& q)
 {
+// copy q
+	queue<T> input = q;
+	queue<T> answer;
     stack<T> s;
+	int count = 1;
     // optional: queue<T> q2;
-
-    // Your code here
+	while (!input.empty()){
+// if odd
+		if (count % 2 != 0){
+			for (int i = 0; i < count; i++){
+				answer.push(input.front());
+				input.pop();
+			}
+			count++;
+			continue;
+		}
+		for (int i = 0; i < count; i++){
+			if (!input.empty()){
+				s.push(input.front());
+				input.pop();
+			}
+		}
+		while (!s.empty()){
+			answer.push(s.top());
+			s.pop();
+		}
+		count++;
+	}
+	q = answer;
 }
 
 /**

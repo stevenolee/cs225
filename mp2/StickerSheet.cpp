@@ -17,30 +17,38 @@ StickerSheet::StickerSheet(const Image &picture, unsigned max){
 }
 
 void StickerSheet::_destroy(){
-/*	for (unsigned i = 0; i < max_stickers; i++){
-		delete stickers[i];
-
-	}*/
+	for (unsigned i = 0; i < max_stickers; i++){
+		if (stickers[i] != NULL){
+			delete stickers[i];
+		}
+	}
 	delete[] x_coordinate;
-	x_coordinate = NULL;
+//	x_coordinate = NULL;
 	delete[] y_coordinate;
-	y_coordinate = NULL;
+//	y_coordinate = NULL;
 	delete[] stickers;
-	stickers = NULL;
+//	stickers = NULL;
 }
 
 void StickerSheet::_copy(const StickerSheet &other){
 // copy the Image: myImage
-	myImage = other.myImage;
-	max_stickers = other.max_stickers;
+	this->myImage = other.myImage;
+	this->max_stickers = other.max_stickers;
 // copy x and y coordinate arrays
-	x_coordinate = new unsigned [other.max_stickers];
-	y_coordinate = new unsigned [other.max_stickers];
-	stickers = new Image* [max_stickers];
+	this->stickers = new Image*[max_stickers];
+	this->x_coordinate = new unsigned [max_stickers];
+	this->y_coordinate = new unsigned [max_stickers];
+	for (unsigned i = 0; i < max_stickers; i++) {
+		x_coordinate[i] = 0;
+		y_coordinate[i] = 0;
+		stickers[i] = NULL;
+	}
 	for (unsigned i = 0; i < max_stickers; i++){
+		if (other.stickers[i] != NULL) {
+			this->stickers[i] = new Image(*(other.stickers[i]));
+		}
 		x_coordinate[i] = other.x_coordinate[i];
 		y_coordinate[i] = other.y_coordinate[i];
-		stickers[i] = other.stickers[i];
 	}
 }
 
@@ -54,43 +62,60 @@ StickerSheet::~StickerSheet(){
 }
 
 const StickerSheet& StickerSheet::operator=(const StickerSheet &other){
-	if (this != &other){
-		_copy(other);
-	}
+
+	this->_destroy();
+	this->_copy(other);
+	
 	return *this;
 }
 
 void StickerSheet::changeMaxStickers(unsigned max){
+
 	unsigned previous_max = max_stickers;
 	max_stickers = max;
 	Image** new_stickers = new Image* [max_stickers];
+	unsigned* new_x = new unsigned [max_stickers];
+	unsigned* new_y = new unsigned [max_stickers];
 	unsigned smaller = (previous_max < max_stickers) ? previous_max : max_stickers;
 
 // DEEP copy what you can
 	for (unsigned i = 0; i < smaller; i++){
 		new_stickers[i] = stickers[i];
+		new_x[i] = x_coordinate[i];
+		new_y[i]  = y_coordinate[i];
 	}
 
 // if longer
 	if (max_stickers > previous_max) {
 		for (unsigned i = smaller; i < max_stickers; i++){
 			new_stickers[i] = NULL;
+			new_x[i] = 0;
+			new_y[i] = 0;
 		}
 	}
 
 // if shorter
 	if (max_stickers < previous_max) {
 		for (unsigned i = smaller; i < previous_max; i++){
-				stickers[i] = NULL;
 				delete stickers[i];
+				stickers[i] = NULL;
 		}
 	}
 
 // route the pointers
 	Image** pointer = stickers;
+	unsigned* x_point = x_coordinate;
+	unsigned* y_point = y_coordinate;
 	stickers = new_stickers;
+	x_coordinate = new_x;
+	y_coordinate = new_y;
 	new_stickers = NULL;
+	new_x = NULL;
+	new_y = NULL;
 	delete[] pointer;
+	delete[] x_point;
+	delete[] y_point;
+
 }
 
 int StickerSheet::addSticker(Image &sticker, unsigned x, unsigned y){
@@ -98,7 +123,7 @@ int StickerSheet::addSticker(Image &sticker, unsigned x, unsigned y){
 	unsigned count = 0;
 // find where the most recent sticker is
 	while (stickers[count] != NULL){count++;}
-	stickers[count] = &sticker;
+	stickers[count] = new Image(sticker);
 	x_coordinate[count] = x;
 	y_coordinate[count] = y;
 	return count;
@@ -114,6 +139,7 @@ bool StickerSheet::translate(unsigned index, unsigned x, unsigned y){
 }
 
 void StickerSheet::removeSticker(unsigned index){
+	Image* insert_pointer = stickers[index];
 // DO I NEED A "DELETE"
 	for (unsigned i = index; i < max_stickers - 1; i++){
 // iterate through the stickers array
@@ -122,21 +148,25 @@ void StickerSheet::removeSticker(unsigned index){
 			x_coordinate[index] = x_coordinate[index+1];
 			y_coordinate[index] = y_coordinate[index+1];
 		} else {
-			stickers[index] = NULL;
-			x_coordinate[index] = 0;
-			y_coordinate[index] = 0;
+			if (stickers[index] != NULL){
+				x_coordinate[index] = 0;
+				y_coordinate[index] = 0;
+				stickers[index] = NULL;
+			}
 		}
 	}
+	delete insert_pointer;
+	insert_pointer = NULL;
 // set the last layer to NULL
 	stickers[max_stickers - 1] = NULL;	
 	x_coordinate[max_stickers - 1] = 0;
 	y_coordinate[max_stickers - 1] = 0;
+
 }
 
 Image *StickerSheet::getSticker(unsigned index) const{
 	if ((index >= max_stickers) || (stickers[index] == NULL)){return NULL;}
-	Image *pointer = stickers[index];
-	return pointer;
+	return stickers[index];
 }
 
 Image StickerSheet::render() const{
