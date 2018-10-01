@@ -1,4 +1,4 @@
-/**
+	/**
  * @file quackfun.h
  * Contains the QuackFun namespace definition.
  */
