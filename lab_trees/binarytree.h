@@ -11,6 +11,7 @@
 #include <vector>
 #include <sstream>
 #include "random.h"
+#include "TreeTraversals/InorderTraversal.h"
 using namespace std;
 
 /**
@@ -122,6 +123,7 @@ class BinaryTree
          *  nondecreasing list output values, and false otherwise. This is also the
          *  criterion for a binary tree to be a binary search tree.
          */
+
         bool isOrderedIterative() const;
 
         /**
@@ -188,7 +190,12 @@ class BinaryTree
         void printLeftToRight(const Node* subRoot) const;
 
 
+// private helper function for the mirror function
+	void mirror(Node* node);
+// helper for isOrderRecursive()
+//bool BinaryTree<T>::isOrderedRecursive(InorderTraversal s) const
 
+//	bool BinaryTree<T>::isOrderedRecursive(iot) const
 
         /**
          * Private helper function for the public insert function.

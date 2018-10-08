@@ -75,11 +75,24 @@ void BinaryTree<T>::printLeftToRight(const Node* subRoot) const
  * Flips the tree over a vertical axis, modifying the tree itself
  *  (not creating a flipped copy).
  */
-    template <typename T>
+template <typename T>
 void BinaryTree<T>::mirror()
 {
-    //your code here
+	mirror(root);
+	cout << endl;
 }
+
+template <typename T>
+void BinaryTree<T>::mirror(Node* node){
+// return NULL if reached a leaf
+	if (node == NULL){return;}
+	mirror(node->left);
+	mirror(node->right);
+	Node* point = node->left;
+	node->left = node->right;
+	node->right = point;
+}
+
 
 
 /**
@@ -92,7 +105,23 @@ template <typename T>
 bool BinaryTree<T>::isOrderedIterative() const
 {
     // your code here
-    return false;
+// if tree empty return false
+	if (height() == -1){
+	    return false;
+	} if (height() == 1){
+		return true;
+	}
+    InorderTraversal<int> iot(getRoot());
+	while (iot.peek() != NULL){
+		int current = iot.peek()->elem;
+		iot.pop();
+		if (iot.peek() == NULL){break;}
+		int next = iot.peek()->elem;
+		if (current > next){
+			return false;
+		}
+	}
+	return true;
 }
 
 /**
@@ -105,8 +134,20 @@ template <typename T>
 bool BinaryTree<T>::isOrderedRecursive() const
 {
     // your code here
-    return false;
+ 	InorderTraversal<int> iot(getRoot());
+	return isOrderRecursive(iot);
+return false;
 }
+
+template <typename T>
+bool BinaryTree<T>::isOrderedRecursive(InorderTraversal s) const
+{
+    // your code here
+	if (s.peek() == NULL){return;}
+	s.pop();
+	return (s.peek()->elem < isOrderRecursive(s))
+}
+
 
 
 /**
