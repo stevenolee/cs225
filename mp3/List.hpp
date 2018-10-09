@@ -82,7 +82,6 @@ tail_ = NULL;
 template <typename T>
 void List<T>::insertFront(T const & ndata) {
   /// @todo Graded in MP3.1
-// losing this __________________________________________________________________
 	ListNode* newNode = new ListNode(ndata);
 // check if the list is already empty
 	if (head_ == NULL){
@@ -358,7 +357,16 @@ List<T> List<T>::split(int splitPoint) {
 template <typename T>
 typename List<T>::ListNode * List<T>::split(ListNode * start, int splitPoint) {
   /// @todo Graded in MP3.2
-  return NULL;
+	ListNode* newHead = start;
+	int split = splitPoint;
+// get the new head of the second linked list
+	for (int i = 0; i < split; i++){
+		newHead = newHead->next;
+	}
+	ListNode* newHeadPrev = newHead->prev;
+	newHeadPrev->next = NULL;
+	newHead->prev = NULL;
+	return newHead;
 }
 
 /**
@@ -399,7 +407,81 @@ void List<T>::mergeWith(List<T> & otherList) {
 template <typename T>
 typename List<T>::ListNode * List<T>::merge(ListNode * first, ListNode* second) {
   /// @todo Graded in MP3.2
-  return NULL;
+	if (second == NULL){return NULL;}
+	ListNode* firstIterator = first;
+	ListNode* firstPrev = first;
+	ListNode* secondIterator = second;
+	ListNode* secondPrev = second;
+	while (1){
+		while (1){
+// if first run
+			if (firstPrev == firstIterator){
+//cout << "insert front " << endl;
+//cout << "secondIterator->data: " << secondIterator->data << endl;
+//cout << "firstIterator->data: " << firstIterator->data << endl;
+// if inserting at front
+				if (secondIterator->data < firstIterator->data){
+					second = secondIterator->next;
+					if (second != NULL){
+					second->prev = NULL;
+					}
+					secondIterator->next = firstIterator;
+					secondIterator->prev = NULL;
+					first->prev = secondIterator;
+					first = secondIterator;
+//					first->length_++;
+					break;
+				}
+			} else if (firstIterator != NULL){
+//cout << "insert mid " << endl;
+//cout << "secondIterator->data: " << secondIterator->data << endl;
+//cout << "firstIterator->data: " << firstIterator->data << endl;
+// if inserting in middle
+				if (secondIterator->data < firstIterator->data){
+					second = secondIterator->next;
+					if (second != NULL){
+						second->prev = NULL;
+					}
+					secondIterator->next = firstIterator;
+					firstIterator->prev = secondIterator;
+					firstPrev->next = secondIterator;
+					secondIterator->prev = firstPrev;
+//					first->length_++;
+					break;
+				}
+			} else {
+//cout << "insert end " << endl;
+// inserting at the end
+				second = secondIterator->next;
+				if (second != NULL){
+					second->prev = NULL;
+				}
+				firstPrev->next = secondIterator;
+				secondIterator->prev = firstPrev;
+				secondIterator->next = NULL;
+//				first->length_++;
+				break;
+			}
+// increment the firstIterator and firstPrev
+			firstPrev = firstIterator;
+			firstIterator = firstIterator->next;
+//cout << "while 1 " << endl;
+		}
+//cout << "while 2" << endl;
+// check if second NULL, reset firstIterator, firstPrev, secondIterator
+	if (second == NULL){break;}
+/*	secondPrev = second->prev;
+	second = second->next;
+	second->prev = NULL;
+	if (secondPrev != NULL){
+		secondPrev->next = NULL;
+		secondPrev->prev = NULL;
+	}*/
+	firstIterator = first;
+	firstPrev = firstIterator;
+	secondIterator = second;
+	}
+  return first;
 }
 
 /**
@@ -427,5 +509,22 @@ void List<T>::sort() {
 template <typename T>
 typename List<T>::ListNode* List<T>::mergesort(ListNode * start, int chainLength) {
   /// @todo Graded in MP3.2
-  return NULL;
+	if (chainLength > 1){
+// get endPoint
+		ListNode* midPoint = start;
+//		int odd = chainLength%2;
+		int mid = chainLength / 2;
+//		if (odd){mid+=1;}
+
+		ListNode* secondHalf = split(start, mid);
+cout << "mid: " << mid << endl;
+cout << "start->data: " << start->data << endl;
+cout << "secondHalf->data: " << secondHalf->data << endl;
+		mergesort(start, mid);
+		mergesort(secondHalf, chainLength - mid);
+cout << "POST OP start->data: " << start->data << endl;
+cout << "POST OP secondHalf->data: " << secondHalf->data << endl;
+		merge(start, secondHalf);
+	}
+	return start;
 }

@@ -21,6 +21,23 @@ TEST_CASE("List::insertFront", "[weight=5][part=1]") {
   REQUIRE(list.size() == 10);
 }
 
+TEST_CASE("hi", "[weight=5][part=1]") {
+  List<unsigned> list1;
+  for (unsigned i = 0; i <= 10; i = i + 1) { list1.insertFront(i); }
+//  for (unsigned i = 1; i <= 11; i = i + 2) { list1.insertFront(i); }
+//  REQUIRE(list.size() == 10);
+cout << "list: ";
+list1.print(cout);
+cout << endl;
+
+list1.sort();
+cout << "after sort _________________________" << endl << endl;
+
+cout << "sorted list: ";
+list1.print(cout);
+cout << endl;
+}
+
 
 //
 // Iterator Tests:
