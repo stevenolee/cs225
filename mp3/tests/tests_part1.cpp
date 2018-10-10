@@ -20,6 +20,32 @@ TEST_CASE("List::insertFront", "[weight=5][part=1]") {
 
   REQUIRE(list.size() == 10);
 }
+/*
+TEST_CASE("merging", "[weight=5][part=1]") {
+  List<unsigned> list1;
+  List<unsigned> list2;
+  for (unsigned i = 0; i <= 5; i = i + 1) { list1.insertBack(i); }
+  for (unsigned i = 1; i <= 5; i = i + 1) { list2.insertBack(i); }
+list2.insertBack(11);
+list2.insertBack(12);
+//  REQUIRE(list.size() == 10);
+cout << "list1: ";
+list1.print(cout);
+cout << endl;
+cout << "list2: ";
+list2.print(cout);
+cout << endl;
+
+list1.mergeWith(list2);
+cout << "after merge _________________________" << endl << endl;
+
+cout << "merged list1: ";
+list1.print(cout);
+cout << endl;
+cout << "list2: ";
+list2.print(cout);
+cout << endl;
+}
 
 TEST_CASE("hi", "[weight=5][part=1]") {
   List<unsigned> list1;
@@ -37,7 +63,7 @@ cout << "sorted list: ";
 list1.print(cout);
 cout << endl;
 }
-
+*/
 
 //
 // Iterator Tests:

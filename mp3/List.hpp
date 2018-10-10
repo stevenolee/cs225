@@ -410,78 +410,46 @@ typename List<T>::ListNode * List<T>::merge(ListNode * first, ListNode* second) 
 	if (second == NULL){return NULL;}
 	ListNode* firstIterator = first;
 	ListNode* firstPrev = first;
-	ListNode* secondIterator = second;
-	ListNode* secondPrev = second;
-	while (1){
-		while (1){
-// if first run
-			if (firstPrev == firstIterator){
-//cout << "insert front " << endl;
-//cout << "secondIterator->data: " << secondIterator->data << endl;
-//cout << "firstIterator->data: " << firstIterator->data << endl;
-// if inserting at front
-				if (secondIterator->data < firstIterator->data){
-					second = secondIterator->next;
-					if (second != NULL){
-					second->prev = NULL;
-					}
-					secondIterator->next = firstIterator;
-					secondIterator->prev = NULL;
-					first->prev = secondIterator;
-					first = secondIterator;
-//					first->length_++;
-					break;
-				}
-			} else if (firstIterator != NULL){
-//cout << "insert mid " << endl;
-//cout << "secondIterator->data: " << secondIterator->data << endl;
-//cout << "firstIterator->data: " << firstIterator->data << endl;
-// if inserting in middle
-				if (secondIterator->data < firstIterator->data){
-					second = secondIterator->next;
-					if (second != NULL){
-						second->prev = NULL;
-					}
-					secondIterator->next = firstIterator;
-					firstIterator->prev = secondIterator;
-					firstPrev->next = secondIterator;
-					secondIterator->prev = firstPrev;
-//					first->length_++;
-					break;
-				}
-			} else {
-//cout << "insert end " << endl;
-// inserting at the end
-				second = secondIterator->next;
-				if (second != NULL){
-					second->prev = NULL;
-				}
-				firstPrev->next = secondIterator;
-				secondIterator->prev = firstPrev;
-				secondIterator->next = NULL;
-//				first->length_++;
-				break;
+	ListNode* secondIterator = NULL;
+// while second list still has data
+	while (second != NULL){
+// inserting back
+		if (firstIterator == NULL){
+			secondIterator = second;
+			second = second->next;
+			if (second != NULL){
+				second->prev = NULL;
 			}
-// increment the firstIterator and firstPrev
+			firstPrev->next = secondIterator;
+			secondIterator->prev = firstPrev;
+			secondIterator->next = firstIterator;
+			firstPrev = secondIterator;
+		} else if (second->data < firstIterator->data){
+			secondIterator = second;
+			second = second->next;
+			if (second != NULL){
+				second->prev = NULL;
+			}
+			firstPrev = firstIterator->prev;
+			secondIterator->next = firstIterator;
+			firstIterator->prev = secondIterator;
+			if (firstPrev != NULL){
+				firstPrev->next = secondIterator;
+			} else {
+				first = secondIterator;
+			}
+			secondIterator->prev = firstPrev;
+		} else {
+// not inserted yet, increment pointers
 			firstPrev = firstIterator;
 			firstIterator = firstIterator->next;
-//cout << "while 1 " << endl;
+			continue;
 		}
-//cout << "while 2" << endl;
-// check if second NULL, reset firstIterator, firstPrev, secondIterator
-	if (second == NULL){break;}
-/*	secondPrev = second->prev;
-	second = second->next;
-	second->prev = NULL;
-	if (secondPrev != NULL){
-		secondPrev->next = NULL;
-		secondPrev->prev = NULL;
-	}*/
-	firstIterator = first;
-	firstPrev = firstIterator;
-	secondIterator = second;
+// if inserted, reset the pointers
+//		firstIterator = first;
+//		firstPrev = firstIterator;
 	}
-  return first;
+	return first;
 }
 
 /**
@@ -517,14 +485,20 @@ typename List<T>::ListNode* List<T>::mergesort(ListNode * start, int chainLength
 //		if (odd){mid+=1;}
 
 		ListNode* secondHalf = split(start, mid);
-cout << "mid: " << mid << endl;
-cout << "start->data: " << start->data << endl;
-cout << "secondHalf->data: " << secondHalf->data << endl;
-		mergesort(start, mid);
-		mergesort(secondHalf, chainLength - mid);
-cout << "POST OP start->data: " << start->data << endl;
-cout << "POST OP secondHalf->data: " << secondHalf->data << endl;
-		merge(start, secondHalf);
+//cout << "mid: " << mid << endl;
+//cout << "start->data: " << start->data << endl;
+//cout << "secondHalf->data: " << secondHalf->data << endl;
+		ListNode* l = mergesort(start, mid);
+		ListNode* r = mergesort(secondHalf, chainLength - mid);
+//cout << "POST OP start->data: " << start->data << endl;
+//cout << "POST OP secondHalf->data: " << secondHalf->data << endl;
+		if (l < r){
+			return merge(l, r);
+		} else {
+			return merge(r, l);
+		}
+	} else {
+		return start;
 	}
-	return start;
+//	return start;
 }
