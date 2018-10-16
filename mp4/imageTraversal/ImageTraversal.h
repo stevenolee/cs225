@@ -7,8 +7,10 @@
 #include "../cs225/HSLAPixel.h"
 #include "../cs225/PNG.h"
 #include "../Point.h"
+#include <stack>
 
 using namespace cs225;
+using namespace std;
 
 /**
  * A base class for traversal algorithms on images.
@@ -29,6 +31,10 @@ public:
   class Iterator : std::iterator<std::forward_iterator_tag, Point> {
   public:
     Iterator();
+//custom constructor
+	Iterator(ImageTraversal<T> & traversal, Point startPoint, double t) 
+//custom constructor 2
+	Iterator(BFS & traversal, Point startPoint, double t);
 
     Iterator & operator++();
     Point operator*();
@@ -40,7 +46,11 @@ public:
   private:
     /** @todo [Part 1] */
     /** add private members here if neccesary*/
-
+	DFS* traversalDFS;
+	BFS* traversalBFS;
+	Point start;
+	Point current;
+	double tol;
   };  
 
   /**

@@ -7,6 +7,9 @@
 #include "../Point.h"
 
 #include "ImageTraversal.h"
+#include <stack>
+
+using namespace std;
 
 /**
  * Calculates a metric for the difference between two pixels, used to
@@ -31,8 +34,25 @@ double ImageTraversal::calculateDelta(const HSLAPixel & p1, const HSLAPixel & p2
 /**
  * Default iterator constructor.
  */
-ImageTraversal::Iterator::Iterator() {
+ImageTraversal::Iterator::Iterator() : traversal(NULL){
   /** @todo [Part 1] */
+	// nothing
+}
+
+// custom constructor
+ImageTraversal::Iterator::Iterator(ImageTraversal<T> & traversal, Point startPoint, double t) 
+	:traversalDFS(&traversal), start(startPoint), tol(t)
+{
+	current = traversal.peek();
+	
+}
+
+// custom constructor 2
+ImageTraversal::Iterator::Iterator(BFS & traversal, Point startPoint, double t) 
+	:traversalBFS(&traversal), start(startPoint), tol(t)
+{
+	current = traversal.peek();
+	
 }
 
 /**
@@ -42,7 +62,50 @@ ImageTraversal::Iterator::Iterator() {
  */
 ImageTraversal::Iterator & ImageTraversal::Iterator::operator++() {
   /** @todo [Part 1] */
-  return *this;
+	unsigned x = current.x;
+	unsigned y = current.y;
+	double delta;
+// check right
+	delta = calculateDelta(pic.getPixel(x + 1, y), pic.getPixel(x, y));
+	if (delta < tolerance){
+		temp = Point(x + 1, y);
+		add(temp);
+		current = temp;
+		return *this;
+	} 
+// check bottom
+	delta = calculateDelta(pic.getPixel(x, y + 1), pic.getPixel(x, y));
+	if (delta < tolerance){
+		temp = Point(x, y + 1);
+		add(temp);
+		current = temp;
+		return *this;
+	} 
+// check left
+	delta = calculateDelta(pic.getPixel(x - 1, y), pic.getPixel(x, y));
+	if (delta < tolerance){
+		temp = Point(x - 1, y);
+		add(temp);
+		current = temp;
+		return *this;
+	} 
+// check above
+	delta = calculateDelta(pic.getPixel(x, y - 1), pic.getPixel(x, y));
+	if (delta < tolerance){
+		temp = Point(x, y - 1);
+		add(temp);
+		current = temp;
+		return *this;
+	} 
+
+
+
+
+
+
+
+
+	return *this;
 }
 
 /**
@@ -52,7 +115,7 @@ ImageTraversal::Iterator & ImageTraversal::Iterator::operator++() {
  */
 Point ImageTraversal::Iterator::operator*() {
   /** @todo [Part 1] */
-  return Point(0, 0);
+  return current;
 }
 
 /**
