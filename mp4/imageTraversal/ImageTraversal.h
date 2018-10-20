@@ -32,7 +32,7 @@ public:
   public:
     Iterator();
 //custom constructor
-	Iterator(ImageIterator* trav, const PNG& png, Point startPoint, double t);
+	Iterator(ImageTraversal* trav, const PNG& png, Point startPoint, double t);
 //custom constructor 2
 //	Iterator(BFS & traversal, Point startPoint, double t);
 
@@ -51,10 +51,12 @@ public:
 //	BFS* traversalBFS;
 // pointer to the PNG 
 	stack<Point>* pointStack;
+	ImageTraversal* traversal;
 	PNG pic;
 	Point start;
 	Point current;
 	double tol;
+	vector<Point>;
   };  
 
   /**

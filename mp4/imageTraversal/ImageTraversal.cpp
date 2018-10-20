@@ -40,8 +40,8 @@ ImageTraversal::Iterator::Iterator(){
 }
 
 // custom constructor
-ImageTraversal::Iterator::Iterator(ImageTraversal trav, const PNG & png, Point startPoint, double t) 
-	:traversal(traversal), pic(png), start(startPoint), tol(t)
+ImageTraversal::Iterator::Iterator(ImageTraversal* trav, const PNG & png, Point startPoint, double t) 
+	:traversal(trav), pic(png), start(startPoint), tol(t)
 {
 	current = start;
 	

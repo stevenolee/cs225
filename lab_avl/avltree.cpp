@@ -25,7 +25,7 @@ V AVLTree<K, V>::find(Node* subtree, const K& key) const
     }
 }
 
-// changes the height by 'offset'for all nodes in the subtree with given root node
+// return height of the subtree
 template <class K, class V>
 int AVLTree<K, V>::getHeight(Node* current){
 	if (current == NULL){return -1;}
@@ -40,14 +40,6 @@ int AVLTree<K, V>::getHeight(Node* current){
 	}
 
 	return max(getHeight(current->left)+1, getHeight(current->right)+1);
-
-/*	if (current == NULL){
-		return;	
-	}
-	current->value = current->value - offset;
-	updateHeight(current->left, offset);
-	updateHeight(current->right, offset);
-*/
 }
 
 
@@ -80,6 +72,7 @@ void AVLTree<K, V>::rotateRight(Node*& t)
     // your code here
 	Node* stickRight = root;
 	Node* stickMid = stickRight->left;
+cout << "_______________________" << stickMid->key << endl;
 	stickRight->left = stickMid->right;
 	stickMid->right = stickRight;
 	root = stickMid;
@@ -100,6 +93,7 @@ template <class K, class V>
 void AVLTree<K, V>::rebalance(Node*& subtree)
 {
     // your code here
+cout << "REBALANCING " << subtree->key << endl;
 	int heightLeft = getHeight(subtree->left);
 	int heightRight = getHeight(subtree->right);
 	int balance = heightRight - heightLeft;
@@ -116,9 +110,10 @@ void AVLTree<K, V>::rebalance(Node*& subtree)
 			rotateRightLeft(subtree);
 		}
 	}
-cout << "subtree " << subtree->key << "'s NEW height: " << getHeight(subtree) << endl;
 	int height = getHeight(subtree);
 	subtree->height = height;
+//if (subtree->left != NULL){subtree->left->height = getHeight(subtree->left);}	
+//if (subtree->right != NULL){subtree->right->height = getHeight(subtree->right);}	
 }
 
 template <class K, class V>
@@ -135,21 +130,22 @@ void AVLTree<K, V>::insert(Node*& subtree, const K& key, const V& value)
 		Node* child = new Node(key, value);
 		subtree = child;
 		subtree->height = 0;
+//cout << "what the fuck did i just insert? key: " << subtree->key << " height: " << subtree->height << endl;
 		return;
 	}
-
 // recursion
 	if (key < subtree->key){
+//if (subtree->left != NULL){cout << "THE RECURSION PATH______: " << subtree->key << "->" << subtree->left->key << endl;}
 		insert(subtree->left, key, value);
 	} else {
+//if (subtree->right != NULL){cout << "THE RECURSION PATH______: " << subtree->key << "->" << subtree->right->key << endl;}
 		insert(subtree->right, key, value);
 	}
-
+//cout << "RECURSION UNFOLDING :O!!!  " << subtree->key << endl;
 // rebalance
-cout << "height of current subtree " << subtree->key << ": " << getHeight(subtree) << endl;
-cout << "subtree left and right: " << subtree->left << " " << subtree->right << endl;
+//cout << "subtree left and right: " << subtree->left << " " << subtree->right << endl;
 if (subtree->right != NULL){
-	cout << "KEY" << subtree->right->key << endl;
+//	cout << "subtree->right->key: " << subtree->right->key << endl;
 }
 	rebalance(subtree);
 
@@ -165,24 +161,44 @@ void AVLTree<K, V>::remove(const K& key)
 template <class K, class V>
 void AVLTree<K, V>::remove(Node*& subtree, const K& key)
 {
+
     if (subtree == NULL)
         return;
 
     if (key < subtree->key) {
         // your code here
+		remove(subtree->left, key);
     } else if (key > subtree->key) {
         // your code here
+		remove(subtree->right, key);
     } else {
         if (subtree->left == NULL && subtree->right == NULL) {
-            /* no-child remove */
+            // no-child remove 
             // your code here
+			delete subtree;
+			subtree = NULL;
         } else if (subtree->left != NULL && subtree->right != NULL) {
-            /* two-child remove */
+            // two-child remove 
             // your code here
+// find IOP
+			Node* IOP = subtree->left;
+			while (IOP->right != NULL){
+				IOP = IOP->right;
+			}
+			swap(IOP, subtree);
+			remove(root, IOP->key);
         } else {
-            /* one-child remove */
+            // one-child remove 
             // your code here
+			Node* del = subtree;
+			if (subtree->left != NULL){
+				subtree = subtree->left;
+			} else {
+				subtree = subtree->right;
+			}
+			delete del;
         }
         // your code here
+		rebalance(subtree);
     }
 }
