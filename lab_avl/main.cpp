@@ -83,9 +83,13 @@ void testRotateRight()
     AVLTree<int, int> tree;
     printHeader("Right Rotation");
     tree.insert(3, 3);
+tree.print();
     tree.insert(0, 0);
+tree.print();
     tree.insert(8, 8);
+tree.print();
     tree.insert(6, 6);
+tree.print();
     printBefore();
     tree.print();
     printAfter(5);

@@ -32,9 +32,9 @@ public:
   public:
     Iterator();
 //custom constructor
-	Iterator(ImageTraversal<T> & traversal, Point startPoint, double t) 
+	Iterator(ImageIterator* trav, const PNG& png, Point startPoint, double t);
 //custom constructor 2
-	Iterator(BFS & traversal, Point startPoint, double t);
+//	Iterator(BFS & traversal, Point startPoint, double t);
 
     Iterator & operator++();
     Point operator*();
@@ -46,8 +46,12 @@ public:
   private:
     /** @todo [Part 1] */
     /** add private members here if neccesary*/
-	DFS* traversalDFS;
-	BFS* traversalBFS;
+//	DFS* traversal = new ImageTraversal();
+//	DFS* traversalDFS;
+//	BFS* traversalBFS;
+// pointer to the PNG 
+	stack<Point>* pointStack;
+	PNG pic;
 	Point start;
 	Point current;
 	double tol;

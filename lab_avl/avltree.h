@@ -94,6 +94,7 @@ class AVLTree
      * Removes a key from the AVLTree. The key is assumed to exist in the tree.
      * @param key The key to remove
      */
+     
     void remove(const K& key);
 
     /**
@@ -120,7 +121,9 @@ class AVLTree
      * @param newOut The stream to print to
      */
     void setOutput(ostream& newOut);
-
+    
+// helper function
+    int getHeight(Node* current);
     /**
      * Gets the inorder traversal of an AVL tree's keys.
      * @param inorder The vector in which to save the traversal
