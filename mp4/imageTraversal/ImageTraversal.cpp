@@ -87,7 +87,6 @@ ImageTraversal::Iterator & ImageTraversal::Iterator::operator++() {
 			}
 		} 
 	}
-// check bottom
 	if (y + 1 < pic.height()){
 		delta = calculateDelta(pic.getPixel(x, y + 1), pic.getPixel(start.x, start.y));
 		if (delta < tol){
@@ -95,7 +94,6 @@ ImageTraversal::Iterator & ImageTraversal::Iterator::operator++() {
 				temp = Point(x, y + 1);
 				traversal->add(temp);
 				current = temp;
-//				visit[x][y+1] = true;
 			}
 		} 
 	}
@@ -107,7 +105,6 @@ ImageTraversal::Iterator & ImageTraversal::Iterator::operator++() {
 				temp = Point(x - 1, y);
 				traversal->add(temp);
 				current = temp;
-//				visit[x-1][y] = true;
 			}
 		} 
 	}
@@ -119,7 +116,6 @@ ImageTraversal::Iterator & ImageTraversal::Iterator::operator++() {
 				temp = Point(x, y - 1);
 				traversal->add(temp);
 				current = temp;
-//				visit[x][y-1] = true;
 			}
 		} 
 	}
@@ -128,7 +124,12 @@ ImageTraversal::Iterator & ImageTraversal::Iterator::operator++() {
 		current = traversal->pop();
 	}
 
+	if(traversal->empty())
+		traversal = NULL;
 
+
+	if(traversal != NULL)
+	current = traversal->peek();
 	return *this;
 }
 

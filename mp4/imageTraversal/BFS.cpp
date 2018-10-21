@@ -30,6 +30,7 @@ cout << start.x << " " << start.y << endl;
 	q.push(startingPoint);
 	tol = tolerance;
 	pic = png;
+cout << "FUCK___________" << endl;
 }
 
 /**
