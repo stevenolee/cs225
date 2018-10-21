@@ -24,18 +24,19 @@ using namespace std;
  */
 DFS::DFS(const PNG & png, const Point & start, double tolerance) {  
   /** @todo [Part 1] */
+
 	startingPoint = start;
 	s.push(startingPoint);
 	tol = tolerance;
 	pic = png;
 }
 
-/**
+/*
  * Returns an iterator for the traversal starting at the first point.
  */
 ImageTraversal::Iterator DFS::begin() {
 /** @todo [Part 1] */
-	ImageTraversal* poly = this;
+	ImageTraversal* poly = new DFS(this->pic, this->startingPoint, this->tol);
   return ImageTraversal::Iterator(poly, pic, startingPoint, tol);
 }
 
@@ -78,5 +79,5 @@ Point DFS::peek() const {
  */
 bool DFS::empty() const {
   /** @todo [Part 1] */
-	return (!s.empty());
+	return (s.empty());
 }

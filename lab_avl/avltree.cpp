@@ -80,6 +80,7 @@ void AVLTree<K, V>::rotateRight(Node*& t)
     // your code here
 	Node* stickRight = root;
 	Node* stickMid = stickRight->left;
+cout << "______________________________________for rotateRight (r, m, l): " << stickRight << stickMid << stickRight << endl;
 	stickRight->left = stickMid->right;
 	stickMid->right = stickRight;
 	root = stickMid;
@@ -116,7 +117,7 @@ void AVLTree<K, V>::rebalance(Node*& subtree)
 			rotateRightLeft(subtree);
 		}
 	}
-cout << "subtree " << subtree->key << "'s NEW height: " << getHeight(subtree) << endl;
+//cout << "subtree " << subtree->key << "'s NEW height: " << getHeight(subtree) << endl;
 	int height = getHeight(subtree);
 	subtree->height = height;
 }
@@ -146,10 +147,10 @@ void AVLTree<K, V>::insert(Node*& subtree, const K& key, const V& value)
 	}
 
 // rebalance
-cout << "height of current subtree " << subtree->key << ": " << getHeight(subtree) << endl;
-cout << "subtree left and right: " << subtree->left << " " << subtree->right << endl;
+//cout << "height of current subtree " << subtree->key << ": " << getHeight(subtree) << endl;
+//cout << "subtree left and right: " << subtree->left << " " << subtree->right << endl;
 if (subtree->right != NULL){
-	cout << "KEY" << subtree->right->key << endl;
+//	cout << "KEY" << subtree->right->key << endl;
 }
 	rebalance(subtree);
 

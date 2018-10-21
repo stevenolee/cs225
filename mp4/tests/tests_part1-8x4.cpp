@@ -71,7 +71,7 @@ TEST_CASE("DFS iterator visits all points in the correct order (7x4 image)", "[w
 TEST_CASE("BFS iterator visits all points in the correct order (7x4 image)", "[weight=1][part=1]") {
   PNG png = getTestPNG_8x4();
   Point startPoint(2, 2);
-  
+  cout << "REAL START: " << startPoint.x << " " << startPoint.y << endl;
   BFS t(png, startPoint, 0.2);
   ImageTraversal::Iterator it = t.begin();
 

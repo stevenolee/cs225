@@ -36,7 +36,6 @@ double ImageTraversal::calculateDelta(const HSLAPixel & p1, const HSLAPixel & p2
  */
 ImageTraversal::Iterator::Iterator(){
   /** @todo [Part 1] */
-	// IDK WHAT TO DOOOOOOOOOOOOOOOOOO
 	traversal = NULL;
 }
 
@@ -52,7 +51,6 @@ ImageTraversal::Iterator::Iterator(ImageTraversal* trav, const PNG & png, Point 
 			visit[i][j] = false;
 		}
 	}
-
 }
 
 /**
@@ -62,10 +60,15 @@ ImageTraversal::Iterator::Iterator(ImageTraversal* trav, const PNG & png, Point 
  */
 ImageTraversal::Iterator & ImageTraversal::Iterator::operator++() {
   /** @todo [Part 1] */
-
-	current = traversal->pop();
+	if (!traversal->empty()){
+		current = traversal->pop();
+	}
 	unsigned x = current.x;
 	unsigned y = current.y;
+	visit[x][y] = true;
+
+// pop if already visited before
+
 //	if (visit[x][y]){
 //		return *this;
 //	}
@@ -120,20 +123,19 @@ ImageTraversal::Iterator & ImageTraversal::Iterator::operator++() {
 			}
 		} 
 	}
-	current = traversal->peek();
-	visit[x][y] = true;
-/*
-	while (visit[traversal->peek().x][traversal->peek().y] && !traversal->empty()){
-		traversal->pop();
-	}	
-*/
+	
+	while (visit[current.x][current.y] && !traversal->empty()){
+		current = traversal->pop();
+	}
+
+
 	return *this;
 }
 
 /**
  * Iterator accessor opreator.
  * 
- * Accesses the current Point in the ImageTraversal.
+ * Accesses the current Point in the Imagetraversal->
  */
 Point ImageTraversal::Iterator::operator*() {
   /** @todo [Part 1] */
