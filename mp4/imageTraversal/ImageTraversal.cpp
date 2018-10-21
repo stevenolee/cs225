@@ -37,6 +37,7 @@ double ImageTraversal::calculateDelta(const HSLAPixel & p1, const HSLAPixel & p2
 ImageTraversal::Iterator::Iterator(){
   /** @todo [Part 1] */
 	// IDK WHAT TO DOOOOOOOOOOOOOOOOOO
+	traversal = NULL;
 }
 
 // custom constructor
@@ -53,15 +54,7 @@ ImageTraversal::Iterator::Iterator(ImageTraversal* trav, const PNG & png, Point 
 	}
 
 }
-/*
-// custom constructor 2
-ImageTraversal::Iterator::Iterator(BFS & traversal, Point startPoint, double t) 
-	:traversalBFS(&traversal), start(startPoint), tol(t)
-{
-	current = traversal.peek();
-	
-}
-*/
+
 /**
  * Iterator increment opreator.
  *
@@ -69,6 +62,7 @@ ImageTraversal::Iterator::Iterator(BFS & traversal, Point startPoint, double t)
  */
 ImageTraversal::Iterator & ImageTraversal::Iterator::operator++() {
   /** @todo [Part 1] */
+
 	current = traversal->pop();
 	unsigned x = current.x;
 	unsigned y = current.y;
@@ -124,6 +118,11 @@ ImageTraversal::Iterator & ImageTraversal::Iterator::operator++() {
 	}
 	current = traversal->peek();
 	visit[x][y] = true;
+/*
+	while (visit[traversal->peek().x][traversal->peek().y] && !traversal->empty()){
+		traversal->pop();
+	}	
+*/
 	return *this;
 }
 
