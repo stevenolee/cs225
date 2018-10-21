@@ -44,7 +44,14 @@ ImageTraversal::Iterator::Iterator(ImageTraversal* trav, const PNG & png, Point 
 	:traversal(trav), pic(png), start(startPoint), tol(t)
 {
 	current = start;
-	
+	visit = new bool*[png.width()];
+	for (unsigned int i = 0; i < png.width(); i++){
+		visit[i] = new bool[png.height()];
+		for (unsigned int j = 0; j < png.height(); j++){
+			visit[i][j] = false;
+		}
+	}
+
 }
 /*
 // custom constructor 2
@@ -62,50 +69,61 @@ ImageTraversal::Iterator::Iterator(BFS & traversal, Point startPoint, double t)
  */
 ImageTraversal::Iterator & ImageTraversal::Iterator::operator++() {
   /** @todo [Part 1] */
+	current = traversal->pop();
 	unsigned x = current.x;
 	unsigned y = current.y;
+//	if (visit[x][y]){
+//		return *this;
+//	}
 	double delta;
 	Point temp;
+
 // check right
-	delta = calculateDelta(pic.getPixel(x + 1, y), pic.getPixel(x, y));
-	if (delta < tol){
-		temp = Point(x + 1, y);
-		add(temp);
-		current = temp;
-		return *this;
-	} 
+	if (x + 1 < pic.width()){
+		delta = calculateDelta(pic.getPixel(x + 1, y), pic.getPixel(start.x, start.y));
+		if (delta <= tol){
+			if (!visit[x+1][y]){
+				temp = Point(x + 1, y);
+				traversal->add(temp);
+				current = temp;
+			}
+		} 
+	}
 // check bottom
-	delta = calculateDelta(pic.getPixel(x, y + 1), pic.getPixel(x, y));
-	if (delta < tol){
-		temp = Point(x, y + 1);
-		add(temp);
-		current = temp;
-		return *this;
-	} 
+	if (y + 1 < pic.height()){
+		delta = calculateDelta(pic.getPixel(x, y + 1), pic.getPixel(start.x, start.y));
+		if (delta <= tol){
+			if (!visit[x][y+1]){
+				temp = Point(x, y + 1);
+				traversal->add(temp);
+				current = temp;
+			}
+		} 
+	}
 // check left
-	delta = calculateDelta(pic.getPixel(x - 1, y), pic.getPixel(x, y));
-	if (delta < tol){
-		temp = Point(x - 1, y);
-		add(temp);
-		current = temp;
-		return *this;
-	} 
+	if (x >= 1){
+		delta = calculateDelta(pic.getPixel(x - 1, y), pic.getPixel(start.x, start.y));
+		if (delta <= tol){
+			if (!visit[x-1][y]){
+				temp = Point(x - 1, y);
+				traversal->add(temp);
+				current = temp;
+			}
+		} 
+	}
 // check above
-	delta = calculateDelta(pic.getPixel(x, y - 1), pic.getPixel(x, y));
-	if (delta < tol){
-		temp = Point(x, y - 1);
-		add(temp);
-		current = temp;
-		return *this;
-	} 
-
-
-
-
-
-
-
-
+	if (y >= 1){
+		delta = calculateDelta(pic.getPixel(x, y - 1), pic.getPixel(start.x, start.y));
+		if (delta <= tol){
+			if (!visit[x][y-1]){
+				temp = Point(x, y - 1);
+				traversal->add(temp);
+				current = temp;
+			}
+		} 
+	}
+	current = traversal->peek();
+	visit[x][y] = true;
 	return *this;
 }
 
@@ -126,6 +144,32 @@ Point ImageTraversal::Iterator::operator*() {
  */
 bool ImageTraversal::Iterator::operator!=(const ImageTraversal::Iterator &other) {
   /** @todo [Part 1] */
+/*
+    bool thisEmpty = false; 
+    bool otherEmpty = false;
+
+	if (traversal == NULL){
+		thisEmpty = true;
+	} else {
+		thisEmpty = traversal->empty();
+	}
+    if (other.traversal == NULL){
+		otherEmpty = true;
+	} else {
+		otherEmpty = other.traversal->empty(); 
+	}
+
+    if (thisEmpty && otherEmpty){
+		return false; 
+	}
+    else if ((!thisEmpty)&&(!otherEmpty)){
+		return !(traversal->peek() == other.traversal->peek());
+	}
+    else {
+		return true;
+	}
+*/
   return false;
+
 }
 

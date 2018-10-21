@@ -35,7 +35,7 @@ public:
 
 private:
 	stack<Point> s;
-	Point start;
+	Point startingPoint;
 	double tol;
 	PNG pic;
 	/** @todo [Part 1] */

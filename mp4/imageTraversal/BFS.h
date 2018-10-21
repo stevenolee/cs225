@@ -34,9 +34,10 @@ public:
   bool empty() const;
 
 private:
-	queue<Point> q;
-	Point current;
-	double tol;
   /** @todo [Part 1] */
   /** add private members here*/
+	PNG pic;
+	queue<Point> q;
+	double tol;
+	Point startingPoint;
 };

@@ -8,6 +8,7 @@
 #include "../cs225/PNG.h"
 #include "../Point.h"
 #include <stack>
+#include <vector>
 
 using namespace cs225;
 using namespace std;
@@ -50,13 +51,12 @@ public:
 //	DFS* traversalDFS;
 //	BFS* traversalBFS;
 // pointer to the PNG 
-	stack<Point>* pointStack;
 	ImageTraversal* traversal;
 	PNG pic;
 	Point start;
 	Point current;
 	double tol;
-	vector<Point>;
+	bool** visit;
   };  
 
   /**

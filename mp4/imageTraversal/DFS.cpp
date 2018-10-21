@@ -24,8 +24,8 @@ using namespace std;
  */
 DFS::DFS(const PNG & png, const Point & start, double tolerance) {  
   /** @todo [Part 1] */
-	start = start;
-	s.push(start);
+	startingPoint = start;
+	s.push(startingPoint);
 	tol = tolerance;
 	pic = png;
 }
@@ -34,8 +34,9 @@ DFS::DFS(const PNG & png, const Point & start, double tolerance) {
  * Returns an iterator for the traversal starting at the first point.
  */
 ImageTraversal::Iterator DFS::begin() {
-  /** @todo [Part 1] */
-  return ImageTraversal::Iterator(*this, const &pic, start, tol);
+/** @todo [Part 1] */
+	ImageTraversal* poly = this;
+  return ImageTraversal::Iterator(poly, pic, startingPoint, tol);
 }
 
 /**
