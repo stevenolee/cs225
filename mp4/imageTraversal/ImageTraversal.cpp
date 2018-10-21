@@ -75,7 +75,7 @@ ImageTraversal::Iterator & ImageTraversal::Iterator::operator++() {
 // check right
 	if (x + 1 < pic.width()){
 		delta = calculateDelta(pic.getPixel(x + 1, y), pic.getPixel(start.x, start.y));
-		if (delta <= tol){
+		if (delta < tol){
 			if (!visit[x+1][y]){
 				temp = Point(x + 1, y);
 				traversal->add(temp);
@@ -86,7 +86,7 @@ ImageTraversal::Iterator & ImageTraversal::Iterator::operator++() {
 // check bottom
 	if (y + 1 < pic.height()){
 		delta = calculateDelta(pic.getPixel(x, y + 1), pic.getPixel(start.x, start.y));
-		if (delta <= tol){
+		if (delta < tol){
 			if (!visit[x][y+1]){
 				temp = Point(x, y + 1);
 				traversal->add(temp);
@@ -97,7 +97,7 @@ ImageTraversal::Iterator & ImageTraversal::Iterator::operator++() {
 // check left
 	if (x >= 1){
 		delta = calculateDelta(pic.getPixel(x - 1, y), pic.getPixel(start.x, start.y));
-		if (delta <= tol){
+		if (delta < tol){
 			if (!visit[x-1][y]){
 				temp = Point(x - 1, y);
 				traversal->add(temp);
@@ -108,7 +108,7 @@ ImageTraversal::Iterator & ImageTraversal::Iterator::operator++() {
 // check above
 	if (y >= 1){
 		delta = calculateDelta(pic.getPixel(x, y - 1), pic.getPixel(start.x, start.y));
-		if (delta <= tol){
+		if (delta < tol){
 			if (!visit[x][y-1]){
 				temp = Point(x, y - 1);
 				traversal->add(temp);
@@ -143,7 +143,7 @@ Point ImageTraversal::Iterator::operator*() {
  */
 bool ImageTraversal::Iterator::operator!=(const ImageTraversal::Iterator &other) {
   /** @todo [Part 1] */
-/*
+
     bool thisEmpty = false; 
     bool otherEmpty = false;
 
@@ -167,7 +167,7 @@ bool ImageTraversal::Iterator::operator!=(const ImageTraversal::Iterator &other)
     else {
 		return true;
 	}
-*/
+
   return false;
 
 }
