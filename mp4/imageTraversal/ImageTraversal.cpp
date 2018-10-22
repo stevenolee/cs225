@@ -83,7 +83,7 @@ ImageTraversal::Iterator & ImageTraversal::Iterator::operator++() {
 				temp = Point(x + 1, y);
 				traversal->add(temp);
 				current = temp;
-//				visit[x+1][y] = true;
+				cout << "Right" << current << endl;
 			}
 		} 
 	}
@@ -94,6 +94,7 @@ ImageTraversal::Iterator & ImageTraversal::Iterator::operator++() {
 				temp = Point(x, y + 1);
 				traversal->add(temp);
 				current = temp;
+				cout << "Below" << current << endl;
 			}
 		} 
 	}
@@ -105,6 +106,7 @@ ImageTraversal::Iterator & ImageTraversal::Iterator::operator++() {
 				temp = Point(x - 1, y);
 				traversal->add(temp);
 				current = temp;
+				cout << "LEft" << current << endl;
 			}
 		} 
 	}
@@ -116,20 +118,24 @@ ImageTraversal::Iterator & ImageTraversal::Iterator::operator++() {
 				temp = Point(x, y - 1);
 				traversal->add(temp);
 				current = temp;
+				cout << "UP" << current << endl;
 			}
 		} 
 	}
-	
+	current = traversal->peek();
 	while (visit[current.x][current.y] && !traversal->empty()){
 		current = traversal->pop();
+		cout << "RUng " << current;
 	}
-
+		cout << current << endl;
 	if(traversal->empty())
 		traversal = NULL;
 
-
+	
 	if(traversal != NULL)
-	current = traversal->peek();
+		current = traversal->peek();
+
+	
 	return *this;
 }
 

@@ -29,6 +29,7 @@ DFS::DFS(const PNG & png, const Point & start, double tolerance) {
 	s.push(startingPoint);
 	tol = tolerance;
 	pic = png;
+	cout << "DFS" << endl;
 }
 
 /*
