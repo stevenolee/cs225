@@ -13,6 +13,8 @@
 
 #include "Point.h"
 #include "Animation.h"
+#include <queue>
+
 
 using namespace cs225;
 /**
@@ -28,7 +30,9 @@ private:
 	/** @todo [Part 2] */
 	/** add private members here*/
 	PNG pic;
-	ColorPicker* color;
-	ImageTraversal* traverse;
-	ImageTraversal::Iterator it;
+	vector<ColorPicker*> color;
+//	ColorPicker* color;
+	vector<ImageTraversal*> traverse;
+//	ImageTraversal* traverse;
+
 };

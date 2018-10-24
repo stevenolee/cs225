@@ -10,6 +10,7 @@
 #include "FloodFilledImage.h"
 
 using namespace cs225;
+using namespace std;
 
 /**
  * Constructs a new instance of a FloodFilledImage with a image `png`.
@@ -31,9 +32,9 @@ FloodFilledImage::FloodFilledImage(const PNG & png) {
  */
 void FloodFilledImage::addFloodFill(ImageTraversal & traversal, ColorPicker & colorPicker) {
   /** @todo [Part 2] */
-	color = &colorPicker;
-	traverse = &traversal;
-	it = traverse->begin();
+	color.push_back(&colorPicker);
+	traverse.push_back(&traversal);
+
 }
 
 /**
@@ -58,22 +59,33 @@ void FloodFilledImage::addFloodFill(ImageTraversal & traversal, ColorPicker & co
 Animation FloodFilledImage::animate(unsigned frameInterval) const {
   Animation animation;
   /** @todo [Part 2] */
-	unsigned count = 0;
+// add base image
+	animation.addFrame(pic);
 
-	while (!traverse->empty()){
-		if (count%frameInterval == 0){
-			animation.addFrame(pic);
+	vector<ColorPicker*>::const_iterator itColors = color.begin();
+
+	for (ImageTraversal* temp : traverse){
+		unsigned count = 0;
+		ImageTraversal::Iterator it = temp->begin();
+
+		while (it != temp->end()){
+			if (count%frameInterval == 0){
+				animation.addFrame(pic);
+			}
+			Point current = *it;
+			HSLAPixel pointer = (*itColors)->getColor(current.x, current.y);
+			HSLAPixel& pixel = pic.getPixel(current.x, current.y);
+			HSLAPixel* newPixel = new HSLAPixel(pointer.h, pointer.s, pointer.l, pointer.a);
+			pixel = *newPixel;
+			++it;
+			count++;
 		}
-		Point current = traverse->peek();
-		HSLAPixel pointer= color->getColor(current.x, current.y);
-		HSLAPixel& pixel = pic.getPixel(current.x, current.y);
-		HSLAPixel* newPixel = new HSLAPixel(pointer.h, pointer.s, pointer.l, pointer.a);
-		pixel = *newPixel;
-		++it;
-		count++:
+		
+		++itColors;
 	}
 
-
+// add last image
+	animation.addFrame(pic);
 
   return animation;
 }
