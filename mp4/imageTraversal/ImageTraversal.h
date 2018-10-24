@@ -47,9 +47,6 @@ public:
   private:
     /** @todo [Part 1] */
     /** add private members here if neccesary*/
-//	DFS* traversal = new ImageTraversal();
-//	DFS* traversalDFS;
-//	BFS* traversalBFS;
 // pointer to the PNG 
 	ImageTraversal* traversal;
 	PNG pic;

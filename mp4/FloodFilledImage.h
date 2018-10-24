@@ -27,5 +27,8 @@ public:
 private:
 	/** @todo [Part 2] */
 	/** add private members here*/
-
+	PNG pic;
+	ColorPicker* color;
+	ImageTraversal* traverse;
+	ImageTraversal::Iterator it;
 };
