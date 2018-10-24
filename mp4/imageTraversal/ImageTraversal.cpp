@@ -62,16 +62,14 @@ ImageTraversal::Iterator & ImageTraversal::Iterator::operator++() {
   /** @todo [Part 1] */
 	if (!traversal->empty()){
 		current = traversal->pop();
+	} else {
+		traversal = NULL;
+		return *this;
 	}
 	unsigned x = current.x;
 	unsigned y = current.y;
 	visit[x][y] = true;
 
-// pop if already visited before
-
-//	if (visit[x][y]){
-//		return *this;
-//	}
 	double delta;
 	Point temp;
 
@@ -82,7 +80,7 @@ ImageTraversal::Iterator & ImageTraversal::Iterator::operator++() {
 			if (!visit[x+1][y]){
 				temp = Point(x + 1, y);
 				traversal->add(temp);
-				current = temp;
+//				current = temp;
 			}
 		} 
 	}
@@ -92,7 +90,7 @@ ImageTraversal::Iterator & ImageTraversal::Iterator::operator++() {
 			if (!visit[x][y+1]){
 				temp = Point(x, y + 1);
 				traversal->add(temp);
-				current = temp;
+//				current = temp;
 			}
 		} 
 	}
@@ -103,7 +101,7 @@ ImageTraversal::Iterator & ImageTraversal::Iterator::operator++() {
 			if (!visit[x-1][y]){
 				temp = Point(x - 1, y);
 				traversal->add(temp);
-				current = temp;
+//				current = temp;
 			}
 		} 
 	}
@@ -114,14 +112,20 @@ ImageTraversal::Iterator & ImageTraversal::Iterator::operator++() {
 			if (!visit[x][y-1]){
 				temp = Point(x, y - 1);
 				traversal->add(temp);
-				current = temp;
+//				current = temp;
 			}
 		} 
 	}
 	current = traversal->peek();
-	while (visit[current.x][current.y] && !traversal->empty()){
-		current = traversal->pop();
-	}
+
+while (!traversal->empty()){
+	int x_coordinate = traversal->peek().x;
+	int y_coordinate = traversal->peek().y;
+	if (visit[x_coordinate][y_coordinate] == true){
+		traversal->pop();
+	} else {break;}
+}
+	
 	if(traversal->empty())
 		traversal = NULL;
 
