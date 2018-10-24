@@ -69,14 +69,21 @@ Animation FloodFilledImage::animate(unsigned frameInterval) const {
 		ImageTraversal::Iterator it = temp->begin();
 
 		while (it != temp->end()){
-			if (count%frameInterval == 0){
+			if (count == frameInterval){
 				animation.addFrame(pic);
+				count = 0;
 			}
 			Point current = *it;
 			HSLAPixel pointer = (*itColors)->getColor(current.x, current.y);
 			HSLAPixel& pixel = pic.getPixel(current.x, current.y);
-			HSLAPixel* newPixel = new HSLAPixel(pointer.h, pointer.s, pointer.l, pointer.a);
-			pixel = *newPixel;
+			pixel.h = pointer.h;
+			pixel.s = pointer.s;
+			pixel.l = pointer.l;
+			pixel.a = pointer.a;
+/*
+			HSLAPixel newPixel = HSLAPixel(pointer.h, pointer.s, pointer.l, pointer.a);
+			pixel = newPixel;
+*/
 			++it;
 			count++;
 		}
