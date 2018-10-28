@@ -14,6 +14,7 @@
 #include <iostream>
 #include <string>
 #include <sstream>
+#include <algorithm>
 
 /**
  * BTree class. Provides interfaces for inserting and finding elements in
@@ -22,6 +23,7 @@
  * @author Matt Joras
  * @date Winter 2013
  */
+using namespace std;
 template <class K, class V>
 class BTree
 {
@@ -344,9 +346,11 @@ class BTree
 template <class T, class C>
 size_t insertion_idx(const std::vector<T>& elements, const C& val)
 {
+//cout << "THINGY:___  " << typeid(val).name() << endl;
     /* TODO Your code goes here! */
-
-    return 5;
+typename vector<T>::const_iterator x;
+x = lower_bound(elements.begin(), elements.end(), val);
+return (x - elements.begin());
 }
 
 #include "btree_given.cpp"

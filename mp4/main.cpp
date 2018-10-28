@@ -22,7 +22,7 @@ int main() {
   //   submit Part 3 of this assignment -- uncomment it when you're ready.
   
 	PNG pic;
- 	pic.readFromFile("cornthing.png");
+ 	pic.readFromFile("bread.png");
 	FloodFilledImage image(pic);
 	DFS dfs(pic, Point(40, 40), 0.05);
 	RainbowColorPicker rainbow(0.05);
