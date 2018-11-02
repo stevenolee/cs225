@@ -80,11 +80,80 @@ KDTree<Dim>::KDTree(const vector<Point<Dim>>& newPoints)
     /**
      * @todo Implement this function!
      */
+	int length = newPoints.size();
+	int medianIndex = (length-1) / 2;
 	
-
+	
 
 }
 
+template <int Dim>
+Point<Dim>* KDTree<Dim>::quickSelect(vector<Point<Dim>>& v, int start, int end, int k, int dimension){
+// make sure that k is valid
+	if (k > 0 && k <= end){
+		return NULL;
+	}
+	int index = partition(v, start, end, k, dimension);
+
+// if k is found, return
+	if (index == k){
+		return &v[index];
+	}
+// if index < k
+	if (index < k){
+		return quickSelect(v, index + 1, end, k - index); 
+	}
+// if index > k
+	if (index > k){
+		return quickSelect(v, 1, index - 1, k);
+	}
+
+	return NULL;
+
+}
+template <int Dim>
+int KDTree<Dim>::partition(vector<Point<Dim>>& v, int start, int end, int dimension){
+//	Point<Dim> pivot = v[end];
+	int piv = end;	
+	while (start < end){
+//		while (v[start] < pivot){
+		while (smallerDimVal(start, piv, dimension)){
+			start++;
+		}
+//		while (pivot < v[end]){
+		while(smallerDimVal(piv, end, dimension)){
+			end--;
+		}
+		if (v[start][dimension] == v[end][dimension]){
+			start++;
+		}
+		else if (start < end){
+			Point<Dim>* temp = v[start];
+			v[start] = v[end];
+			v[end] = temp;
+		}
+	}
+	return end;
+}
+
+/*
+template <int Dim>
+int KDTree<Dim>::partition(vector<Point<Dim>>& v, int start, int end, int pivotIndex){
+// make pivot last index
+	Point<Dim> pivot = v[pivotIndex];
+	swap(&v[end], &v[pivotIndex]);
+	int temp = start;
+
+	for (int i = start; i < end; i++){
+		if (v[i] < pivot){
+			swap(v[temp], v[i]);
+			temp++;
+		}
+	}
+	swap(v[end], v[temp]);
+	return temp;
+}
+*/
 template <int Dim>
 KDTree<Dim>::KDTree(const KDTree<Dim>& other) {
   /**

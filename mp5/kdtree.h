@@ -43,6 +43,15 @@ class KDTree
     };
 
   public:
+
+// helper function sorts the given vector and returns a pointer to the new kd tree root
+//Point* quickSelect(vector<Point<Dim>>& v, int start, int end, int k);
+Point<Dim>* quickSelect(vector<Point<Dim>>& v, int start, int end, int k, int dimension);
+// helper function to find the partition
+// return: the pivot that partition finds
+//int partition(vector<Point<Dim>>& v, int start, int end, int pivotIndex);
+int partition(vector<Point<Dim>>& v, int start, int end, int dimension);
+
     /**
      * Determines if Point a is smaller than Point b in a given dimension d.
      * If there is a tie, break it with Point::operator<().
