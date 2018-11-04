@@ -7,6 +7,7 @@
  * @date Summer 2012
  */
 #include "lphashtable.h"
+#include <iostream>
 
 using hashes::hash;
 using std::pair;
@@ -84,11 +85,47 @@ void LPHashTable<K, V>::insert(K const& key, V const& value)
      *
      * @note Remember to resize the table when necessary (load factor >= 0.7).
      * **Do this check *after* increasing elems (but before inserting)!!**
-     * Also, don't forget to mark the cell for probing with should_probe!
+     * Also, don't forget to mark the cell for probing with should _probe!
      */
-
-    (void) key;   // prevent warnings... When you implement this function, remove this line.
-    (void) value; // prevent warnings... When you implement this function, remove this line.
+std::cout << key << ", " << value << std::endl;
+	bool inserted = false;
+	elems++;
+	if (shouldResize()){
+		resizeTable();
+	}
+	int index = hash(key, size);
+// if able to insert
+	if (should_probe[index] == false){
+		pair<K, V>* add = new pair<K, V>(key, value);
+		table[index] = add;
+		should_probe[index] = true;
+		inserted = true;
+	}
+// should probe
+	else if (!inserted) {	
+// from index to end
+		for (int i = index; i < (int)size; i++){
+			if (should_probe[i] == false){
+				pair<K, V>* add = new pair<K, V>(key, value);
+				table[i] = add;
+				should_probe[i] = true;
+				inserted = true;
+				break;
+			}
+		}
+	}
+	else if (!inserted){
+// from beginning to index
+		for (int i = 0; i < index; i++){
+			if (table[i] == NULL){
+				pair<K, V>* add = new pair<K, V>(key, value);
+				table[i] = add;
+				should_probe[i] = true;
+				inserted = true;
+				break;
+				}
+			}
+	}
 }
 
 template <class K, class V>
@@ -97,6 +134,21 @@ void LPHashTable<K, V>::remove(K const& key)
     /**
      * @todo: implement this function
      */
+	elems--;
+	int index = hash(key, size);
+	if (table[index] == NULL){
+		return;
+	}
+	if (table[index]->first != key){
+		return;
+	}
+	for (int i = index; i < (int)size - 1; i++){
+		table[i] = table[i+1];
+		should_probe[i] = should_probe[i+1];
+	}
+	table[(int)size - 1] = NULL;
+	should_probe[(int)size - 1] = false;
+std::cout << "REMOVE THO_________________________________________: " << key << std::endl;
 }
 
 template <class K, class V>
@@ -108,6 +160,13 @@ int LPHashTable<K, V>::findIndex(const K& key) const
      *
      * Be careful in determining when the key is not in the table!
      */
+	int index = hash(key, size);
+	if (table[index] == NULL){
+		return -1;
+	}
+	else if (table[index]->first == key){
+		return index;
+	}
 
     return -1;
 }
@@ -166,4 +225,70 @@ void LPHashTable<K, V>::resizeTable()
      *
      * @hint Use findPrime()!
      */
+	auto newSize = (int)findPrime(size*2);
+    pair<K, V>** newTable = new pair<K, V>*[newSize];
+    bool* newProbe = new bool[newSize];
+
+	auto oldElems = elems;
+	pair<K, V>* pointer = NULL;
+	for (int i = 0; i < newSize; i++){
+		newTable[i] = NULL;
+		newProbe[i] = false;
+	}
+	for (int i = 0; i < (int)size; i++){
+
+		bool inserted = false;
+		if (table[i] == NULL){
+			newTable[i] = NULL;
+			continue;
+		}
+		K key = table[i]->first;
+		V value = table[i]->second;
+		int index = hash(key, newSize);
+// ________________________________________________________________________________________insert begin
+// if able to insert
+	if (newProbe[index] == false){
+		pair<K, V>* add = new pair<K, V>(key, value);
+		newTable[index] = add;
+		newProbe[index] = true;
+		inserted = true;
+	}
+// should probe
+	else if (!inserted) {	
+// from index to end
+		for (int i = index; i < (int)newSize; i++){
+			if (newProbe[i] == false){
+				pair<K, V>* add = new pair<K, V>(key, value);
+				newTable[i] = add;
+				newProbe[i] = true;
+				inserted = true;
+				break;
+			}
+		}
+	}
+	else if (!inserted){
+// from beginning to index
+		for (int i = 0; i < index; i++){
+			if (newTable[i] == NULL){
+				pair<K, V>* add = new pair<K, V>(key, value);
+				newTable[i] = add;
+				newProbe[i] = true;
+				inserted = true;
+				break;
+				}
+			}
+	}
+
+// ________________________________________________________________________________________insert end 
+//		newTable[i] = table[i];
+//		newProbe[i] = should_probe[i];
+//		delete table[i];
+std::cout << "RESIZEEEE_______" << key << ", " << value << " size: " << size << "->" << newSize << std::endl;
+	}
+	delete [] table;
+	delete [] should_probe;
+	table = newTable;
+	should_probe = newProbe;
+	size = newSize;
+	elems = oldElems;
 }
