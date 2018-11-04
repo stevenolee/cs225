@@ -88,9 +88,47 @@ void DHHashTable<K, V>::insert(K const& key, V const& value)
      *  0.7). **Do this check *after* increasing elems!!** Also, don't
      *  forget to mark the cell for probing with should_probe!
      */
+	bool inserted = false;
+	elems++;	
+	if (shouldResize()){
+		resizeTable();
+	}
+	pair<K, V> add = pair<K, V>(key, value);
+	int index = hash(key, size);
 
-    (void) key;   // prevent warnings... When you implement this function, remove this line.
-    (void) value; // prevent warnings... When you implement this function, remove this line.
+// can insert at index
+	if (table[index] == NULL){
+		pair<K, V>* add = new pair<K, V>(key, value);
+		table[index] = add;
+		should_probe[index] = false;
+		inserted = true;
+		return;
+	}
+
+// rehash
+	int count = 0;
+	int factor = secondary_hash(key, size);
+	int newIndex = index;
+// find where we can insert
+	while (!inserted){
+		if (table[newIndex] == NULL){
+			pair<K, V>* add = new pair<K, V>(key, value);
+//std::cout << "rehash: " << add->first << ", " << add->second << std::endl;
+			table[newIndex] = add;
+			should_probe[newIndex] = false;
+			inserted = true;
+		}
+		should_probe[newIndex] = true;
+		newIndex = (index + factor*count++) % size;
+	}
+
+
+
+
+
+
+//    (void) key;   // prevent warnings... When you implement this function, remove this line.
+//    (void) value; // prevent warnings... When you implement this function, remove this line.
 }
 
 template <class K, class V>
@@ -107,6 +145,14 @@ int DHHashTable<K, V>::findIndex(const K& key) const
     /**
      * @todo Implement this function
      */
+	int index = hash(key, size);
+	if (table[index] == NULL){
+		return -1;
+	}
+	else if (table[index]->first == key){
+		return index;
+	}
+
     return -1;
 }
 
