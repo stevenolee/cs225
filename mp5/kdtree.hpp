@@ -80,10 +80,54 @@ KDTree<Dim>::KDTree(const vector<Point<Dim>>& newPoints)
     /**
      * @todo Implement this function!
      */
-	int length = newPoints.size();
+	vector<Point<Dim>> newPointscp = newPoints;
+	int dimension = 0;
+	int length = newPointscp.size();
 	int medianIndex = (length-1) / 2;
+	Point<Dim>* rootNode = quickSelect(newPointscp, 0, length - 1, medianIndex, dimension); 
+	KDTreeNode* tree = new KDTreeNode();
+	tree->point = *rootNode;
+	root = tree;
+	tree->right = NULL;
+	tree->left = NULL;
+	for (int i = 0; i < length; i++){
+// skip the Point that is already the root 
+		if (i == medianIndex){
+			continue;
+		}
+		KDTreeNode* newNode = new KDTreeNode();
+		newNode->point = (newPointscp[i]);
+		insert(tree, newNode, dimension);
+	}
 	
 	
+
+}
+
+template <int Dim>
+KDTreeNode* KDTree<Dim>::insert(KDTreeNode* rootNode, KDTreeNode* newNode, int dimension){
+// check for leaf 
+	if (rootNode->left == NULL && rootNode->right == NULL){
+		if (smallerDimVal(newNode->point, rootNode->point, dimension)){
+			rootNode->left = newNode;
+		}
+		else {
+			rootNode->right = newNode;
+		}
+		return newNode;
+	}
+// check if duplicate
+	else if (rootNode == newNode){
+		return NULL;
+	}
+// if (value of 
+	else if (smallerDimVal(newNode->point, rootNode->point, dimension)){
+		rootNode->left = insert(rootNode->left, newNode, (dimension+1)%Dim);
+	}
+	else {
+		rootNode->right = insert(rootNode->right, newNode, (dimension+1)%Dim);
+	}
+
 
 }
 
@@ -93,7 +137,7 @@ Point<Dim>* KDTree<Dim>::quickSelect(vector<Point<Dim>>& v, int start, int end, 
 	if (k > 0 && k <= end){
 		return NULL;
 	}
-	int index = partition(v, start, end, k, dimension);
+	int index = partition(v, start, end, dimension);
 
 // if k is found, return
 	if (index == k){
@@ -101,11 +145,11 @@ Point<Dim>* KDTree<Dim>::quickSelect(vector<Point<Dim>>& v, int start, int end, 
 	}
 // if index < k
 	if (index < k){
-		return quickSelect(v, index + 1, end, k - index); 
+		return quickSelect(v, index + 1, end, k - index, dimension); 
 	}
 // if index > k
 	if (index > k){
-		return quickSelect(v, 1, index - 1, k);
+		return quickSelect(v, 1, index - 1, k, dimension);
 	}
 
 	return NULL;
@@ -117,18 +161,18 @@ int KDTree<Dim>::partition(vector<Point<Dim>>& v, int start, int end, int dimens
 	int piv = end;	
 	while (start < end){
 //		while (v[start] < pivot){
-		while (smallerDimVal(start, piv, dimension)){
+		while (smallerDimVal(v[start], v[piv], dimension)){
 			start++;
 		}
 //		while (pivot < v[end]){
-		while(smallerDimVal(piv, end, dimension)){
+		while(smallerDimVal(v[piv], v[end], dimension)){
 			end--;
 		}
 		if (v[start][dimension] == v[end][dimension]){
 			start++;
 		}
 		else if (start < end){
-			Point<Dim>* temp = v[start];
+			Point<Dim> temp = v[start];
 			v[start] = v[end];
 			v[end] = temp;
 		}

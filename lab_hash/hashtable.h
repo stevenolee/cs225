@@ -12,9 +12,8 @@
 #include <vector>
 #include <cstddef>
 #include <algorithm>
-
+#include <iostream>
 #include "hashes.h"
-
 /**
  * HashTable: a templated class that implements the Dictionary ADT by using
  * a hash table.

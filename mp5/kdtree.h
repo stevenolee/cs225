@@ -51,7 +51,8 @@ Point<Dim>* quickSelect(vector<Point<Dim>>& v, int start, int end, int k, int di
 // return: the pivot that partition finds
 //int partition(vector<Point<Dim>>& v, int start, int end, int pivotIndex);
 int partition(vector<Point<Dim>>& v, int start, int end, int dimension);
-
+// helper function to insert a point into kdtree
+KDTreeNode insert(KDTreeNode* rootNode, KDTreeNode* newNode, int dimension);
     /**
      * Determines if Point a is smaller than Point b in a given dimension d.
      * If there is a tie, break it with Point::operator<().
