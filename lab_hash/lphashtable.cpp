@@ -144,7 +144,22 @@ void LPHashTable<K, V>::remove(K const& key)
 		return;
 	}
 	if (table[index]->first != key){
-		return;
+		bool found = false;
+		for (size_t i = index; i < size; i++){
+			if (should_probe[i] == false){
+				index = i;
+				break;
+			}
+		}
+// check wrap around 
+		if (!found){
+			for (int i = 0; i < index; i++){
+				if (should_probe[i] == false){
+					index = i;
+					break;
+				}
+			}		
+		}
 	}
 	for (int i = index; i < (int)size - 1; i++){
 		table[i] = table[i+1];

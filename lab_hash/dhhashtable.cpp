@@ -88,38 +88,36 @@ void DHHashTable<K, V>::insert(K const& key, V const& value)
      *  0.7). **Do this check *after* increasing elems!!** Also, don't
      *  forget to mark the cell for probing with should_probe!
      */
-	bool inserted = false;
 	elems++;	
 	if (shouldResize()){
 		resizeTable();
 	}
-	pair<K, V> add = pair<K, V>(key, value);
 	int index = hash(key, size);
-
-// can insert at index
+// can insert at first hash found
 	if (table[index] == NULL){
 		pair<K, V>* add = new pair<K, V>(key, value);
 		table[index] = add;
 		should_probe[index] = false;
-		inserted = true;
 		return;
 	}
-
 // rehash
 	int count = 0;
 	int factor = secondary_hash(key, size);
-	int newIndex = index;
+	int startingIndex = index;
 // find where we can insert
-	while (!inserted){
-		if (table[newIndex] == NULL){
-			pair<K, V>* add = new pair<K, V>(key, value);
-//std::cout << "rehash: " << add->first << ", " << add->second << std::endl;
-			table[newIndex] = add;
-			should_probe[newIndex] = false;
-			inserted = true;
+	while (/*should_probe[index]*/1){
+// never found
+		if (startingIndex == index && count != 0){
+			return;
 		}
-		should_probe[newIndex] = true;
-		newIndex = (index + factor*count++) % size;
+// found
+		if (table[index] == NULL){
+			pair<K, V>* add = new pair<K, V>(key, value);
+			table[index] = add;
+			should_probe[index] = false;
+			return;
+		}
+		index = (index + secondary_hash(key, size)*count++) % size;
 	}
 
 
@@ -137,6 +135,40 @@ void DHHashTable<K, V>::remove(K const& key)
     /**
      * @todo Implement this function
      */
+/*	elems--;
+	int index = findIndex(key);
+	if (table[index] == NULL){
+		return;
+	}
+	table[index] = NULL;
+*/
+
+	elems--;
+	int index = hash(key, size);
+	if (table[index] == NULL){
+		return;
+	}
+	if (table[index]->first != key){
+		int startingIndex = index;
+		int count = 0;
+		while (1){
+			if (startingIndex == index && count != 0){
+				return;
+			}
+			if (table[index] != NULL && table[index]->first == key){
+				break;
+			}		
+
+			index = (index + secondary_hash(key, size)*count++) % size;
+		}		
+	}
+	for (int i = index; i < (int)size - 1; i++){
+		table[i] = table[i+1];
+		should_probe[i] = should_probe[i+1];
+	}
+	table[(int)size - 1] = NULL;
+	should_probe[(int)size - 1] = false;
+
 }
 
 template <class K, class V>
@@ -145,6 +177,7 @@ int DHHashTable<K, V>::findIndex(const K& key) const
     /**
      * @todo Implement this function
      */
+/*
 	int index = hash(key, size);
 	if (table[index] == NULL){
 		return -1;
@@ -153,6 +186,23 @@ int DHHashTable<K, V>::findIndex(const K& key) const
 		return index;
 	}
 
+    return -1;
+*/
+	int startingIndex = hash(key, size);
+	int index = startingIndex;
+	int count = 0;
+// stop probing when found 
+	while (/*should_probe[index]*/1){
+		if (startingIndex == index && count != 0){
+			break;
+		}
+		if (table[index] != NULL && table[index]->first == key){
+			return index;
+		}		
+
+
+		index = (index + secondary_hash(key, size)*count++) % size;
+	}
     return -1;
 }
 
