@@ -138,7 +138,7 @@ KDTree<Dim>::KDTree(const vector<Point<Dim>>& newPoints)
 template <int Dim>
 typename KDTree<Dim>::KDTreeNode* KDTree<Dim>::buildTree(vector<Point<Dim>>& sorted, int start, int end, int counter){
 // set the current dimension and increment our counter
-	if (start >= end){
+	if (start > end){
 		return NULL;
 	}
 
