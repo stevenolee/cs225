@@ -120,11 +120,6 @@ void DHHashTable<K, V>::insert(K const& key, V const& value)
 		index = (index + secondary_hash(key, size)*count++) % size;
 	}
 
-
-
-
-
-
 //    (void) key;   // prevent warnings... When you implement this function, remove this line.
 //    (void) value; // prevent warnings... When you implement this function, remove this line.
 }
