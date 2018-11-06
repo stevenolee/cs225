@@ -52,7 +52,8 @@ int quickSelect(vector<Point<Dim>>& v, int start, int end, int k, int dimension)
 int partition(vector<Point<Dim>>& v, int start, int end, int pivotIndex, int dimension);
 
 // helper function that recursively builds the tree
-KDTree<Dim>::KDTreeNode* buildTree(vector<Point<Dim>>& sorted, int start, int end, KDTreeNode* rootNode, int counter);
+//KDTree<Dim>::KDTreeNode* buildTree(vector<Point<Dim>>& sorted, int start, int end, KDTreeNode* rootNode, int counter);
+KDTree<Dim>::KDTreeNode* buildTree(vector<Point<Dim>>& sorted, int start, int end, int counter);
     /**
      * Determines if Point a is smaller than Point b in a given dimension d.
      * If there is a tie, break it with Point::operator<().
