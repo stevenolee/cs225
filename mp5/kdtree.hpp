@@ -93,46 +93,6 @@ KDTree<Dim>::KDTree(const vector<Point<Dim>>& newPoints)
 		root = buildTree(sorted, 0, sorted.size()-1, 0);
 	}
 
-	
-
-//for (auto i = sorted.begin(); i != sorted.end(); ++i)	
-//    std::cout << *i << ' ';
-
-//	KDTreeNode* tree = new KDTreeNode(sorted[rootNode]);
-//	tree->point = rootNode;
-//	root = tree;
-
-/*	for (int i = 0; i < length; i++){
-// skip the Point that is already the root 
-		if (i == medianIndex){
-			continue;
-		}
-		KDTreeNode* newNode = new KDTreeNode();
-		newNode->point = (sorted[i]);
-		insert(tree, newNode, Dim);
-	}*/
-/*
-	vector<Point<Dim>> newPointscp = newPoints;
-	int dimension = 0;
-	int length = newPointscp.size();
-	int medianIndex = (length-1) / 2;
-	Point<Dim>* rootNode = quickSelect(newPointscp, 0, length - 1, medianIndex, dimension); 
-	KDTreeNode* tree = new KDTreeNode();
-	tree->point = *rootNode;
-	root = tree;
-	tree->right = NULL;
-	tree->left = NULL;
-	for (int i = 0; i < length; i++){
-// skip the Point that is already the root 
-		if (i == medianIndex){
-			continue;
-		}
-		KDTreeNode* newNode = new KDTreeNode();
-		newNode->point = (newPointscp[i]);
-		insert(tree, newNode, dimension);
-	}
-*/
-
 }
   
 template <int Dim>
@@ -154,51 +114,6 @@ typename KDTree<Dim>::KDTreeNode* KDTree<Dim>::buildTree(vector<Point<Dim>>& sor
 	newNode->right = buildTree(sorted, median+1, end, counter);
 	return newNode;
 }
-/*
-template <int Dim>
-typename KDTree<Dim>::KDTreeNode* KDTree<Dim>::buildTree(vector<Point<Dim>>& sorted, int start, int end, KDTreeNode* rootNode, int counter){
-// create first node
-	int curDim = counter % Dim;
-	counter++;
-// base case
-	if (start == end){
-// create KDTreeNode for start aka end
-		KDTreeNode* newNode = new KDTreeNode(sorted[start]);
-		if (smallerDimVal(newNode->point, rootNode->point, curDim)){
-			rootNode->left = newNode;
-		}
-		else {
-			rootNode->right = newNode;
-		}
-
-		return rootNode;
-	}
-
-	int medianIndex = (start+end)/2;
-	int median = quickSelect(sorted, start, end, medianIndex, curDim);
-
-// 	create KDTreeNode for median 
-	KDTreeNode* newNode = new KDTreeNode(sorted[median]);
-	if (rootNode != NULL){
-		if (smallerDimVal(newNode->point, rootNode->point, curDim)){
-			rootNode->left = newNode;
-		}
-		else {
-			rootNode->right = newNode;
-		}
-	}
-// rootNode is NULL
-	else {
-		root = newNode;
-		rootNode = newNode;
-	}
-
-// unsure about median (+1?)
-	buildTree(sorted, start, median-1, newNode, counter);
-	buildTree(sorted, median+1, end, rootNode, counter);
-	return root;
-}
-*/
 
 template <int Dim>
 int KDTree<Dim>::quickSelect(vector<Point<Dim>>& v, int start, int end, int k, int dimension){
@@ -243,12 +158,39 @@ int KDTree<Dim>::partition(vector<Point<Dim>>& v, int start, int end, int pivotI
 	return storeIndex;
 }
 
+template <int Dim>
+void KDTree<Dim>::destroy(KDTreeNode* node) {
+	if (node == NULL){
+		return;
+	}
+// delete left and right subtrees
+	destroy(node->left);
+	destroy(node->right);
+// do the deleting
+	delete node;
+}
+
+template <int Dim>
+void KDTree<Dim>::copy(KDTreeNode *& thisRoot, KDTreeNode *& otherRoot) {
+// base case
+	if (otherRoot == NULL){
+		thisRoot = NULL;
+	}
+	else {
+		thisRoot = newKDTreeNode(otherRoot->point);
+// recurse for left and right subtrees
+		copy(thisRoot->left, otherRoot->left);
+		copy(thisRoot->right, otherRoot->right);
+	}
+}
 
 template <int Dim>
 KDTree<Dim>::KDTree(const KDTree<Dim>& other) {
   /**
    * @todo Implement this function!
    */
+	copy(this->root, other->root);
+	
 }
 
 template <int Dim>
@@ -256,8 +198,13 @@ const KDTree<Dim>& KDTree<Dim>::operator=(const KDTree<Dim>& rhs) {
   /**
    * @todo Implement this function!
    */
+// if not already equal, destroy this and set this to rhs
+	if (this != &rhs){
+		destroy(this->root);
+		copy(this->root, rhs->root);
+	}
+	return *this;
 
-  return *this;
 }
 
 template <int Dim>
@@ -265,6 +212,7 @@ KDTree<Dim>::~KDTree() {
   /**
    * @todo Implement this function!
    */
+	destroy(root);
 }
 
 template <int Dim>
