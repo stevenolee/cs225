@@ -217,7 +217,6 @@ KDTree<Dim>::~KDTree() {
 
 template <int Dim>
 Point<Dim> KDTree<Dim>::neighborHelper(KDTreeNode* currentNode, const Point<Dim>& query, int count) const{
-cout << "count: " << count << endl << "currentNode->point: " << currentNode->point << endl;
 // track which way we traverse
 	bool wentLeft = false;
 // create currentBest point;
@@ -281,13 +280,7 @@ currentDim = count % Dim;
 	if (potential < 0 ){
 		potential = currentNode->point[currentDim] - query[currentDim];
 	}
-cout << count << endl;
 
-cout << "subtracting these for potential: " << query[currentDim] << " " << currentNode->point[currentDim] << endl;
-cout << "result of subtraction: " << query[currentDim] - currentNode->point[currentDim] << endl;;
-cout << "currentDimension: " << currentDim << endl;
-cout << "currentRadius: " << radius << ", " << currentBest << " " << query << endl;
-cout <<  "potential: " << potential << ", " << query << " " << currentNode->point << endl;
 	
 
 	bool replace = shouldReplace(query, currentBest, currentNode->point);
@@ -297,15 +290,12 @@ cout <<  "potential: " << potential << ", " << query << " " << currentNode->poin
 		}
 	}
 	if (potential < radius || replace){
-cout << "______its the move" << endl;
 		if(replace)
 			currentBest = currentNode->point;
 // now we have to check the other side of the node
 		if (wentLeft && (currentNode->right != NULL)){
 			currentNode = currentNode->right;
 			Point<Dim> consider = neighborHelper(currentNode, query, count);
-cout << "consider: " << consider << endl;
-cout << "currentBest: " << currentBest << endl;
 			if (shouldReplace(query, currentBest, consider)){
 				currentBest = consider;
 			}
@@ -313,8 +303,6 @@ cout << "currentBest: " << currentBest << endl;
 		else if (!wentLeft && (currentNode->left != NULL)){
 			currentNode = currentNode->left;
 			Point<Dim> consider = neighborHelper(currentNode, query, count);
-cout << "consider: " << consider << endl;
-cout << "currentBest: " << currentBest << endl;
 			if (shouldReplace(query, currentBest, consider)){
 				currentBest = consider;
 			}
@@ -343,9 +331,7 @@ Point<Dim> KDTree<Dim>::findNearestNeighbor(const Point<Dim>& query) const
      * @todo Implement this function!
      */
 //printTree(cout);
-	cout << "QUERY: " << query << endl;
 	Point<Dim> best = neighborHelper(root, query, 0);
-cout << "Best: " << best << endl;
 	return best;
 
 //    return Point<Dim>();
