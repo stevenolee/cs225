@@ -61,6 +61,12 @@ void destroy(KDTreeNode* node);
 // helper function to copy tree
 void copy(KDTreeNode *& thisRoot, KDTreeNode *& otherRoot);
 
+// helper function to find nearest neighbor
+Point<Dim> neighborHelper(KDTreeNode* currentNode, const Point<Dim>& query, int count) const;
+
+// helper function to get radius
+double getRadius(const Point<Dim>& first, const Point<Dim>& second) const;
+
     /**
      * Determines if Point a is smaller than Point b in a given dimension d.
      * If there is a tie, break it with Point::operator<().

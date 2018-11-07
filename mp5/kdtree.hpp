@@ -216,12 +216,113 @@ KDTree<Dim>::~KDTree() {
 }
 
 template <int Dim>
+Point<Dim> KDTree<Dim>::neighborHelper(KDTreeNode* currentNode, const Point<Dim>& query, int count) const{
+cout << "count: " << count << endl << "currentNode->point: " << currentNode->point << endl;
+// track which way we traverse
+	bool wentLeft = false;
+// create currentBest point;
+	Point<Dim> currentBest;
+
+// if we are still recursing deeper into the tree, increment count
+	int currentDim = 0;
+		currentDim = count % Dim;
+		count++;
+// found the leaf
+	if (currentNode->left == NULL && currentNode->right == NULL){
+		if (shouldReplace(query, currentNode->point, root->point)){
+			currentBest = root->point;
+		}
+		else {
+			currentBest = currentNode->point;
+		}
+		return currentBest;
+	}
+	else {
+// choose to recurse left or right subtree
+// left
+		if (smallerDimVal(query, currentNode->point, currentDim)){
+// check if NULL
+			if (currentNode->left == NULL){
+				wentLeft = false;
+				currentNode = currentNode->right;
+				currentBest = neighborHelper(currentNode, query, count);
+			}
+			else {
+				wentLeft = true;
+				currentNode = currentNode->left;
+				currentBest = neighborHelper(currentNode, query, count);
+			}
+		}
+// right
+		else {
+			if (currentNode->right == NULL){
+				wentLeft = true;
+				currentNode = currentNode->left;
+				currentBest = neighborHelper(currentNode, query, count);
+			} 
+			else {
+				wentLeft = false;
+				currentNode = currentNode->right;
+				currentBest = neighborHelper(currentNode, query, count);
+			}
+		}
+	}
+
+// once it's at the end leaf node
+// calculate radius
+	double radius = getRadius(currentBest, query);
+	double potential = abs(query[currentDim] - currentNode->point[currentDim]);
+cout << count << endl;
+cout << "currentRadius: " << radius << ", " << currentBest << " " << query << endl;
+cout <<  "potential: " << potential << ", " << query[currentDim] << " " << currentNode->point[currentDim] << endl;
+	bool replace = shouldReplace(query, currentBest, currentNode->point);
+	if (potential < radius || replace){
+cout << "______its the move" << endl;
+		currentBest = currentNode->point;
+// now we have to check the other side of the node
+		if (wentLeft && (currentNode->right != NULL)){
+			currentNode = currentNode->right;
+			Point<Dim> consider = neighborHelper(currentNode, query, count);
+			if (shouldReplace(query, currentBest, consider)){
+				currentBest = consider;
+			}
+		}
+		else if (!wentLeft && (currentNode->left != NULL)){
+			currentNode = currentNode->left;
+			Point<Dim> consider = neighborHelper(currentNode, query, count);
+			if (shouldReplace(query, currentBest, consider)){
+				currentBest = consider;
+			}
+		}
+	}
+
+
+
+	return currentBest;
+}
+
+template <int Dim>
+double KDTree<Dim>::getRadius(const Point<Dim>& first, const Point<Dim>& second) const{
+	double radius = 0;
+	for (int i = 0; i < Dim; i++){
+		radius = radius + pow(first[i] - second[i], 2);
+	}
+
+	return sqrt(radius);
+}
+
+template <int Dim>
 Point<Dim> KDTree<Dim>::findNearestNeighbor(const Point<Dim>& query) const
 {
     /**
      * @todo Implement this function!
      */
+printTree(cout);
+	cout << "QUERY: " << query << endl;
+	Point<Dim> best = neighborHelper(root, query, 0);
+cout << "Best: " << best << endl;
+	return best;
 
-    return Point<Dim>();
+//    return Point<Dim>();
 }
 
