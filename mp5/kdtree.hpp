@@ -267,22 +267,45 @@ cout << "count: " << count << endl << "currentNode->point: " << currentNode->poi
 			}
 		}
 	}
-
+//count--;
 // once it's at the end leaf node
 // calculate radius
+currentDim = count % Dim;
+
+	if (currentBest == currentNode->point){
+		return currentBest;
+	}
 	double radius = getRadius(currentBest, query);
-	double potential = abs(query[currentDim] - currentNode->point[currentDim]);
+//	double potential = getRadius(query, currentNode->point);
+	double potential = query[currentDim] - currentNode->point[currentDim];
+	if (potential < 0 ){
+		potential = currentNode->point[currentDim] - query[currentDim];
+	}
 cout << count << endl;
+
+cout << "subtracting these for potential: " << query[currentDim] << " " << currentNode->point[currentDim] << endl;
+cout << "result of subtraction: " << query[currentDim] - currentNode->point[currentDim] << endl;;
+cout << "currentDimension: " << currentDim << endl;
 cout << "currentRadius: " << radius << ", " << currentBest << " " << query << endl;
-cout <<  "potential: " << potential << ", " << query[currentDim] << " " << currentNode->point[currentDim] << endl;
+cout <<  "potential: " << potential << ", " << query << " " << currentNode->point << endl;
+	
+
 	bool replace = shouldReplace(query, currentBest, currentNode->point);
+	if (potential == radius){
+		if (smallerDimVal(currentNode->point, currentBest, currentDim)){
+			radius = true;
+		}
+	}
 	if (potential < radius || replace){
 cout << "______its the move" << endl;
-		currentBest = currentNode->point;
+		if(replace)
+			currentBest = currentNode->point;
 // now we have to check the other side of the node
 		if (wentLeft && (currentNode->right != NULL)){
 			currentNode = currentNode->right;
 			Point<Dim> consider = neighborHelper(currentNode, query, count);
+cout << "consider: " << consider << endl;
+cout << "currentBest: " << currentBest << endl;
 			if (shouldReplace(query, currentBest, consider)){
 				currentBest = consider;
 			}
@@ -290,6 +313,8 @@ cout << "______its the move" << endl;
 		else if (!wentLeft && (currentNode->left != NULL)){
 			currentNode = currentNode->left;
 			Point<Dim> consider = neighborHelper(currentNode, query, count);
+cout << "consider: " << consider << endl;
+cout << "currentBest: " << currentBest << endl;
 			if (shouldReplace(query, currentBest, consider)){
 				currentBest = consider;
 			}
@@ -317,7 +342,7 @@ Point<Dim> KDTree<Dim>::findNearestNeighbor(const Point<Dim>& query) const
     /**
      * @todo Implement this function!
      */
-printTree(cout);
+//printTree(cout);
 	cout << "QUERY: " << query << endl;
 	Point<Dim> best = neighborHelper(root, query, 0);
 cout << "Best: " << best << endl;
