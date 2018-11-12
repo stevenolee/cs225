@@ -55,7 +55,6 @@ void helpTestUpdateElem(vector<int> vals)
 
     vector<int> sorted = vals;
     sort(sorted.begin(), sorted.end());
-
     for(size_t i = 0; i < sorted.size(); i++) {
         if (i + 2 == sorted.size()) {
             _heap.updateElem(1, sorted[i] - 1);
