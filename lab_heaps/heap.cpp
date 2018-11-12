@@ -109,7 +109,7 @@ heap<T, Compare>::heap(const std::vector<T>& elems)
 	for (size_t i = 0; i < elems.size(); i++){
 		_elems.push_back(elems[i]);
 	}
-	for (int i = (int)_elems.size(); i >= 0; i--){
+	for (int i = (int)_elems.size()-1; i >= 0; i--){
 		heapifyDown(i);
 	}
 }
@@ -158,7 +158,7 @@ void heap<T, Compare>::updateElem(const size_t & idx, const T& elem)
     // Corrects the heap to remain as a valid heap even after update
 	_elems[idx] = elem;
 //	heapifyUp(idx);
-	heapifyDown(_elems.size());
+	heapifyDown(_elems.size()-1);
 }
 
 
