@@ -42,7 +42,8 @@ unsigned long memoized_fib(unsigned long n)
 {
     /* Your code goes here! */
 	static map<unsigned long, unsigned long> dictionary = {
-	{0, 0}
+	{0, 0},
+	{1, 1}
 	};
 
 	map<unsigned long, unsigned long>::iterator lookup = dictionary.find(n);
