@@ -6,6 +6,9 @@
  * @date Fall 2014
  */
 
+
+// im currently adding up the count of a given word for all the files combined.
+// i should only be getting the max that it appears in any given file.
 #include "common_words.h"
 
 #include <fstream>
@@ -48,12 +51,52 @@ void CommonWords::init_file_word_maps(const vector<string>& filenames)
         // file
         vector<string> words = file_to_vector(filenames[i]);
         /* Your code goes here! */
+
+		while(!words.empty()){
+			string currentWord = words[words.size()-1];
+			map<string, unsigned int>::iterator it = file_word_maps[i].find(currentWord);
+// if found
+			if (it != file_word_maps[i].end()){
+				it->second = it->second + 1;
+			}
+// if not found
+			else {
+				file_word_maps[i].insert(std::pair<string, unsigned int>(currentWord, 1));
+			}
+			words.pop_back();
+		}
+
     }
 }
 
 void CommonWords::init_common()
 {
     /* Your code goes here! */
+//	common.insert(std::pair<string, unsigned int>());
+
+//	vector<map<string, unsigned int>>::iterator it = file_word_maps.begin();
+//	for (map currentMap : *it){
+	size_t size = file_word_maps.size();
+	for (size_t i = 0; i < size; i++){
+// iterator for each of the maps in file_word_maps
+		map<string, unsigned int>::iterator mapIterator = file_word_maps[i].begin();
+		for (; mapIterator != file_word_maps[i].end(); mapIterator++){
+// check if the word in the map has been encountered
+			auto found = common.find(mapIterator->first);
+// if found in common
+			if (found != file_word_maps[i].end()){
+				found->second = found->second + 1;
+			}
+// if not found in common, add it
+			else {
+				common.insert(std::pair<string, unsigned int>(mapIterator->first, 1));
+			}
+
+		}
+	}
+
+
+
 }
 
 /**
@@ -65,6 +108,37 @@ vector<string> CommonWords::get_common_words(unsigned int n) const
 {
     vector<string> out;
     /* Your code goes here! */
+	size_t size = file_word_maps.size();
+	for (size_t i = 0; i < size; i++){
+// iterator for each of the maps in file_word_maps
+		map<string, unsigned int>::const_iterator mapIterator = file_word_maps[i].begin();
+		for (; mapIterator != file_word_maps[i].end(); mapIterator++){
+// check if the word in the map has been encountered n times
+			unsigned int current = mapIterator->second;
+			if (current >= n){
+/*
+// iterator common 
+				bool shouldAdd = false;
+				map<string, unsigned int>::const_iterator it = common.begin();
+				for (; it != common.end(); it++){
+// if it is a common word
+					if (it->first == mapIterator->first){
+						shouldAdd = true;
+						break;
+					}
+				}
+				if (shouldAdd){	
+*/
+					out.push_back(mapIterator->first);
+	//			}
+			}
+		}
+	}
+
+
+
+
+
     return out;
 }
 
