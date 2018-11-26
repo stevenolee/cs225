@@ -49,12 +49,13 @@ void CommonWords::init_file_word_maps(const vector<string>& filenames)
     for (size_t i = 0; i < filenames.size(); i++) {
         // get the corresponding vector of words that represents the current
         // file
+//		vector<map<string, unsigned int>> copy = file_word_maps;
         vector<string> words = file_to_vector(filenames[i]);
-        /* Your code goes here! */
-
+   	     /* Your code goes here! */
+		map<string, unsigned int>::iterator it;
 		while(!words.empty()){
 			string currentWord = words[words.size()-1];
-			map<string, unsigned int>::iterator it = file_word_maps[i].find(currentWord);
+			it = file_word_maps[i].find(currentWord);
 // if found
 			if (it != file_word_maps[i].end()){
 				it->second = it->second + 1;
@@ -65,7 +66,23 @@ void CommonWords::init_file_word_maps(const vector<string>& filenames)
 			}
 			words.pop_back();
 		}
+/*
 
+// update the global with copy
+		map<string, unsigned int>::iterator mapIterator = copy[i].begin();
+		for (; mapIterator != copy[i].end(); mapIterator++){
+			it = file_word_maps[i].find(mapIterator->first);
+// if found save the larger value
+			if (it != file_word_maps[i].end()){
+				if (it->second < mapIterator->second){
+					it->second = mapIterator->second;
+				}
+			}
+			else {
+				file_word_maps[i].insert(std::pair<string, unsigned int>(mapIterator->first, mapIterator->second));
+			}
+		}
+*/
     }
 }
 
@@ -115,6 +132,13 @@ vector<string> CommonWords::get_common_words(unsigned int n) const
 		for (; mapIterator != file_word_maps[i].end(); mapIterator++){
 // check if the word in the map has been encountered n times
 			unsigned int current = mapIterator->second;
+/*
+cout << common.find(mapIterator->first)->second << " " << file_word_maps.size() << endl;
+			if (common.find(mapIterator->first)->second != file_word_maps.size()){
+				continue;
+			}
+*/
+
 			if (current >= n){
 /*
 // iterator common 

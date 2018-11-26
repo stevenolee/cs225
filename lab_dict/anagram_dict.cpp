@@ -20,9 +20,83 @@ using std::ifstream;
  * words.
  * @param filename The name of the word list file.
  */
+/*
+bool areAnagrams(char* one, char* two){
+	int counter[256] = {0};
+	int i;
+
+	for (i = 0; one[i] && two[i]; i++){
+		counter[one[i]]++;
+		counter[two[i]]--;
+	}
+
+	if (one[i] || two[i]){
+		return false;
+	}
+	
+	for (i = 0; i < 256; i++){
+		if (counter[i]){
+			return false;
+		}
+	}
+	return true;
+}
+*/
+
+bool AnagramDict::areAnagrams(string one, string two){
+	std::sort(one.begin(), one.end());
+	std::sort(two.begin(), two.end());
+	return one == two;
+}
+
 AnagramDict::AnagramDict(const string& filename)
 {
     /* Your code goes here! */
+    ifstream file(filename);
+    string line;
+    if (file.is_open()){
+        while (getline(file, line)){
+			vector<string> anagrams;
+			anagrams.push_back(line);
+// check if an anagram for this word already exists in our map
+//			vector<char> word (line.begin(), line.end());
+			std::map<string, vector<string>>::iterator it = dict.find(line);
+// if the word is already in our map, continue
+			if (it != dict.end()){
+				continue;
+			}
+// check entire map for anagram
+			bool alreadyIn = false;
+			bool foundAnagram = false;
+			it = dict.begin();
+			for (; it != dict.end(); it++){
+//				vector<char> checker (it->first.begin(), it->first.end());
+//				if (areAnagrams(checker, word)){
+				if (areAnagrams(it->first, line)){
+					foundAnagram = true;
+// check if the word is already in the map's vector of strings at that particular location
+					alreadyIn = false;
+					for (const string& s : it->second){
+						if (s == line){
+							alreadyIn = true;
+							break;
+						}
+					}
+					if (!alreadyIn){
+						vector<string> temp = it->second;	
+						temp.push_back(line);
+						it->second = temp;
+//						it->second.push_back(line);
+						break;
+					}
+				}
+			}
+			if (!foundAnagram){
+				dict[line] = anagrams;
+			}
+		}
+	}
+
 }
 
 /**
@@ -32,6 +106,46 @@ AnagramDict::AnagramDict(const string& filename)
 AnagramDict::AnagramDict(const vector<string>& words)
 {
     /* Your code goes here! */
+	for (const string& element : words){
+		vector<string> anagrams;
+		anagrams.push_back(element);
+			std::map<string, vector<string>>::iterator it = dict.find(element);
+// if the word is already in our map, continue
+			if (it != dict.end()){
+				continue;
+			}
+// check entire map for anagram
+			bool alreadyIn = false;
+			bool foundAnagram = false;
+			it = dict.begin();
+			for (; it != dict.end(); it++){
+//				vector<char> checker (it->first.begin(), it->first.end());
+//				if (areAnagrams(checker, word)){
+				if (areAnagrams(it->first, element)){
+					foundAnagram = true;
+// check if the word is already in the map's vector of strings at that particular location
+					alreadyIn = false;
+					for (const string& s : it->second){
+						if (s == element){
+							alreadyIn = true;
+							break;
+						}
+					}
+					if (!alreadyIn){
+						vector<string> temp = it->second;	
+						temp.push_back(element);
+						it->second = temp;
+//						it->second.push_back(element);
+						break;
+					}
+				}
+			}
+			if (!foundAnagram){
+				dict[element] = anagrams;
+			}
+
+		dict[element] = anagrams;
+	}
 }
 
 /**
@@ -43,6 +157,11 @@ AnagramDict::AnagramDict(const vector<string>& words)
 vector<string> AnagramDict::get_anagrams(const string& word) const
 {
     /* Your code goes here! */
+	std::map<string, vector<string>>::const_iterator mapIterator = dict.find(word);
+	if (mapIterator != dict.end()){
+		return mapIterator->second;
+	}
+
     return vector<string>();
 }
 
@@ -55,5 +174,20 @@ vector<string> AnagramDict::get_anagrams(const string& word) const
 vector<vector<string>> AnagramDict::get_all_anagrams() const
 {
     /* Your code goes here! */
-    return vector<vector<string>>();
+	vector<vector<string>> all_anagrams;
+// iterate map and add anagram (not singles)
+	vector<string> current;
+	std::map<string, vector<string>>::const_iterator mapIterator = dict.begin();
+	for (; mapIterator != dict.end(); mapIterator++){
+		current = mapIterator->second;
+		if (current.size() <= 1){
+			continue;
+		}
+		else {
+			all_anagrams.push_back(current);
+		}
+	}
+
+
+    return all_anagrams;
 }

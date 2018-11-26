@@ -23,6 +23,10 @@
 class AnagramDict
 {
   public:
+// check if 2 given strings are anagrams
+	bool areAnagrams(char* one, char* two);
+	bool areAnagrams(std::string one, std::string two);
+
     /**
      * Constructs an AnagramDict from a filename with newline-separated
      * words.
