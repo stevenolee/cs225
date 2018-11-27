@@ -1,4 +1,4 @@
-/*
+
 #include "../cs225/catch/catch.hpp"
 #include <iostream>
 #include <fstream>
@@ -94,4 +94,4 @@ TEST_CASE("size2", "[weight=10][part1]")
 
 }
 
-*/
+

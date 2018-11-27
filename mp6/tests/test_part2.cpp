@@ -187,6 +187,7 @@ TEST_CASE("testMakeMazeRandom", "[weight=10][part2]")
 	//sleep(2);
 	SquareMaze maze2;
 	maze2.makeMaze(50, 50);
+PNG * temp = p;
 	p = maze2.drawMaze();
   bool same = true;
 
@@ -209,6 +210,8 @@ TEST_CASE("testMakeMazeRandom", "[weight=10][part2]")
 	}
 	else
 		FAIL("Generated the same 50x50 maze twice");
+delete p;
+delete temp;
 }
 
 TEST_CASE("testSolveMazeValidPath", "[weight=10][part2]")
@@ -233,14 +236,10 @@ TEST_CASE("testSolveMazeValidPath", "[weight=10][part2]")
 
 TEST_CASE("testSolutionBottomRow", "[weight=10][part2]")
 {
-//cout << "one___" << endl;
 	SquareMaze maze;
-//cout << "two___" << endl;
 	MazeReader soln = READ_SOLUTION_MAZE("testSolutionBottomRow",15, 15);
-//cout << "three___" << endl;
 	copyMaze(soln, &maze);
 	vector<int> solution = maze.solveMaze();
-//cout << "four___" << endl;
 
 	int x = 0;
 	int y = 0;
@@ -307,6 +306,7 @@ TEST_CASE("testDrawMazeSmall", "[weight=10][part2]")
 	PNG * actualOutput = maze.drawMaze();
 	actualOutput->writeToFile("testDrawMazeSmall"+ string(".png"));
 	REQUIRE(*actualOutput == solnImage);
+delete actualOutput;
 }
 
 TEST_CASE("testDrawMazeMed", "[weight=10][part2]")
@@ -317,6 +317,7 @@ TEST_CASE("testDrawMazeMed", "[weight=10][part2]")
 	copyMaze(soln, &maze);
 	PNG * actualOutput = maze.drawMaze();
 	REQUIRE(*actualOutput == solnImage);
+delete actualOutput;
 }
 
 TEST_CASE("testDrawMazeLarge", "[weight=10][part2]")
@@ -328,6 +329,7 @@ TEST_CASE("testDrawMazeLarge", "[weight=10][part2]")
 	PNG * actualOutput = maze.drawMaze();
 	actualOutput->writeToFile("testDrawMazeLarge" + string(".png"));
 	REQUIRE(*actualOutput == solnImage);
+delete actualOutput;
 }
 
 TEST_CASE("testDrawSolutionMed", "[weight=10][part2]")
@@ -340,6 +342,7 @@ TEST_CASE("testDrawSolutionMed", "[weight=10][part2]")
 	PNG * actualOutput = maze.drawMazeWithSolution();
 	actualOutput->writeToFile("testDrawSolutionMed" + string(".png"));
 	REQUIRE(*actualOutput == solnImage);
+delete actualOutput;
 }
 
 TEST_CASE("testDrawSolutionLarge", "[weight=10][part2]")
@@ -352,6 +355,7 @@ TEST_CASE("testDrawSolutionLarge", "[weight=10][part2]")
 	PNG * actualOutput = maze.drawMazeWithSolution();
 	actualOutput->writeToFile("testDrawSolutionLarge"+ string(".png"));
 	REQUIRE(*actualOutput == solnImage);
+delete actualOutput;
 }
  
 

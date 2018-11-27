@@ -405,12 +405,17 @@ PNG* SquareMaze::drawMazeWithSolution (){
 			}
 		}
 	}
+	HSLAPixel& temp = picture->getPixel(posx, posy);
+	temp.h = 0;
+	temp.s = 1;
+	temp.l = 0.5;
+	temp.a = 1;
 	posy = posy+5;
 	posx = posx - 4;
 // draw the exit
-cout << "height_: " << height_ << endl;
+//cout << "height_: " << height_ << endl;
 	for (int k = 0; k < 9; k++){	
-cout << posx + k << " " << posy << endl;
+//cout << posx + k << " " << posy << endl;
 		HSLAPixel& ending = picture->getPixel(posx + k, posy);
 		ending.h = 0;
 		ending.s = 0;
