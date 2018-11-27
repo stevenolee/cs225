@@ -12,6 +12,8 @@
 
 using namespace std;
 
+using cs225::PNG;
+
 int main()
 {
     SquareMaze m;

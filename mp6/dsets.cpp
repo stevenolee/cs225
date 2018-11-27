@@ -11,6 +11,10 @@ void DisjointSets::addelements (int num){
 	}
 }
 
+void DisjointSets::clear (){
+		dset.clear();
+}
+
 int DisjointSets::find (int elem){
 	if (dset[elem] < 0){
 		return elem;
