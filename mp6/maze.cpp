@@ -69,6 +69,7 @@ void SquareMaze::makeMaze (int width, int height){
 	height_ = height;
 // set up walls vector
 	vector<bool> inner (4, true);
+	walls.clear();
 	walls.resize(width_*height_, inner);
 // set up dset disjoint
 	disjoint.clear();
@@ -94,22 +95,22 @@ void SquareMaze::makeMaze (int width, int height){
 // remove wall from the opposite side
 				if (random == 0){
 					next++;
-					walls[position+1][opposite] = false;
+					walls[next][opposite] = false;
 					disjoint.setunion(position, next);
 				}
 				else if (random == 1){
 					next += height_;
-					walls[position+height_][opposite] = false;
+					walls[next][opposite] = false;
 					disjoint.setunion(position, next);
 				}
 				else if (random == 2){
 					next--;
-					walls[position-1][opposite] = false;
+					walls[next][opposite] = false;
 					disjoint.setunion(position, next);
 				}
 				else {
 					next -= height_;
-					walls[position-height_][opposite] = false;
+					walls[next][opposite] = false;
 					disjoint.setunion(position, next);
 				}
 			}
@@ -207,13 +208,19 @@ vector<int> SquareMaze::solveMaze (){
 			exit = offset + i;
 		}
 	}
-
+cout << "height and width: " << height_ << " " << width_ << endl;
+cout << "exit: " << exit << endl;
+cout << "distances[exit] " << distances[height_*2] << endl;
 // use start and endpoints to find the path
 	int curDistance = distances[exit];
-	while (curDistance != 0){
+	while (exit != 0){
+cout << "solution.size()" << solution.size() << endl;
 		std::pair<int, int> location = coordinate(exit);
 // check adjacent cells to backtrack
 // check right
+cout << "curDis and exit: " << curDistance << " " << exit << endl;
+cout << location.first << " " << location.second << " width: " << width_<< endl;
+
 		if (canTravel(location.first, location.second, 0) && distances[exit + 1] == curDistance - 1){
 			solution.push_back(2);
 			exit++;
@@ -239,7 +246,12 @@ vector<int> SquareMaze::solveMaze (){
 		}
 	}
 
+
 	reverse(solution.begin(), solution.end());
+cout << "solution: size  " << solution.size() << endl;
+for (vector<int>::iterator it = solution.begin(); it != solution.end(); it++)
+	cout << *it << " ";
+cout << endl;
 	return solution;
 }
 
