@@ -71,6 +71,9 @@ void SquareMaze::makeMaze (int width, int height){
 	vector<bool> inner (4, true);
 	walls.clear();
 	walls.resize(width_*height_, inner);
+
+
+
 // set up dset disjoint
 	disjoint.clear();
 	disjoint.addelements(height_*width_);
@@ -80,7 +83,7 @@ void SquareMaze::makeMaze (int width, int height){
 	while (disjoint.size(0) != height_*width_){
 		for (int y = 0; y < height_; y++){
 			for (int x = 0; x < width_; x++){
-				int position = y*height_ + x;
+				int position = y*width_ + x;
 				if (position == height_*width_ - 1){
 					break;
 				}
@@ -89,33 +92,41 @@ void SquareMaze::makeMaze (int width, int height){
 				while (isBorder(position, random) || loops(position, random)){
 					random = rand() % 4;
 				}
-				int opposite = (random + 2) % 4;
+//				int opposite = (random + 2) % 4;
 // remove wall at the random direction
 				walls[position][random] = false;
 // remove wall from the opposite side
 				if (random == 0){
 					next++;
-					walls[next][opposite] = false;
+					walls[next][2] = false;
 					disjoint.setunion(position, next);
 				}
 				else if (random == 1){
-					next += height_;
-					walls[next][opposite] = false;
+					next += width_;
+					walls[next][3] = false;
 					disjoint.setunion(position, next);
 				}
 				else if (random == 2){
 					next--;
-					walls[next][opposite] = false;
+					walls[next][0] = false;
 					disjoint.setunion(position, next);
 				}
-				else {
-					next -= height_;
-					walls[next][opposite] = false;
+				else if (random == 3){
+					next -= width_;
+					walls[next][1] = false;
 					disjoint.setunion(position, next);
 				}
+
+
+//cout << "wall info at coordinate " << x << " " << y << " for make maze: ";
+//for (vector<bool>::iterator it = walls[position].begin(); it != walls[position].end(); it++){
+//	cout << *it << " ";
+//}
+//cout << endl;
 			}
 		}
 	}
+
 }
 
 bool SquareMaze::canTravel (int x, int y, int dir) const{
@@ -132,17 +143,46 @@ bool SquareMaze::canTravel (int x, int y, int dir) const{
 	if (y == height_-1 && dir == 1){
 		return false;
 	}
+	int position = x + y*width_;
 // check if will hit wall
-	if (walls[x+ y*height_][dir]){
+	if (walls[position][dir]){
+		return false;
+	}
+// check if will hit wall from the other side too in case
+	if (dir == 0 && walls[position + 1][2]){
+		return false;
+	}
+	if (dir == 1 && walls[position + width_][3]){
+		return false;
+	}
+	if (dir == 2 && walls[position - 1][0]){
+		return false;
+	}
+	if (dir == 3 && walls[position - width_][1]){
 		return false;
 	}
 	return true;
 }
 
 void SquareMaze::setWall (int x, int y, int dir, bool exists){
-// knock out the walls from both sides
-	int position = x + y*height_;
+	int position = x + y*width_;
 	walls[position][dir] = exists;
+// maybe try setting on other side as well
+	if (!isBorder(position, dir)){
+		if (dir == 0){
+			walls[position + 1][2] = false;
+		}
+		if (dir == 1){
+			walls[position + width_][3] = false;
+		}
+		if (dir == 2){
+			walls[position - 1][0] = false;
+		}
+		if (dir == 3){
+			walls[position - width_][1] = false;
+		}
+	}
+
 }
 
 std::pair<int, int> SquareMaze::coordinate(int address){
@@ -165,26 +205,38 @@ vector<int> SquareMaze::bfs(){
 		int address = q.front();
 		q.pop();
 		std::pair<int, int> coor = coordinate(address);
+
+//cout << "current coordinate in bfs: " << coor.first << " " << coor.second << endl;
+//cout << "wall info at coordinate: ";
+//for (vector<bool>::iterator it = walls[address].begin(); it != walls[address].end(); it++){
+//	cout << *it << " ";
+//}
+//cout << endl;
+
 // if can travel right
 		if (canTravel(coor.first, coor.second, 0) && !visited[address + 1]){
+//cout << "can travel right" << endl;
 			q.push(address + 1);
 			distances[address + 1] = distances[address] + 1; 
 			visited[address + 1] = true;
 		}
 // if can travel down
 		if (canTravel(coor.first, coor.second, 1) && !visited[address + width_]){
+//cout << "can travel down" << endl;
 			q.push(address + width_);
 			distances[address + width_] = distances[address] + 1;
 			visited[address + width_] = true;
 		}
 // if can travel left
 		if (canTravel(coor.first, coor.second, 2) && !visited[address - 1]){
+//cout << "can travel left" << endl;
 			q.push(address - 1);
 			distances[address - 1] = distances[address] + 1;
 			visited[address - 1] = true;
 		}
 // if can travel up
 		if (canTravel(coor.first, coor.second, 3) && !visited[address - width_]){
+//cout << "can travel up" << endl;
 			q.push(address - width_);
 			distances[address - width_] = distances[address] + 1;
 			visited[address - width_] = true;
@@ -200,6 +252,11 @@ vector<int> SquareMaze::solveMaze (){
 // 4. vector.reverse(); ?
 	vector<int> solution;
 	vector<int> distances = bfs();
+//cout << "bfs:" << endl;
+//for (vector<int>::iterator it = distances.begin(); it != distances.end(); it++){
+//	cout << *it << " ";
+//}
+//cout << endl;
 // exit is the location of the exit in the array
 	int exit = (height_-1) * width_;
 	for (int i = 0; i < width_; i++){
@@ -208,18 +265,18 @@ vector<int> SquareMaze::solveMaze (){
 			exit = offset + i;
 		}
 	}
-cout << "height and width: " << height_ << " " << width_ << endl;
-cout << "exit: " << exit << endl;
-cout << "distances[exit] " << distances[height_*2] << endl;
+//cout << "height and width: " << height_ << " " << width_ << endl;
+//cout << "exit: " << exit << endl;
+//cout << "distances[exit] " << distances[exit] << endl;
 // use start and endpoints to find the path
 	int curDistance = distances[exit];
-	while (exit != 0){
-cout << "solution.size()" << solution.size() << endl;
+	while (exit > 0){
+//cout << "solution.size()" << solution.size() << endl;
 		std::pair<int, int> location = coordinate(exit);
 // check adjacent cells to backtrack
 // check right
-cout << "curDis and exit: " << curDistance << " " << exit << endl;
-cout << location.first << " " << location.second << " width: " << width_<< endl;
+//cout << "curDis and exit: " << curDistance << " " << exit << endl;
+//cout << location.first << " " << location.second << " width: " << width_<< endl;
 
 		if (canTravel(location.first, location.second, 0) && distances[exit + 1] == curDistance - 1){
 			solution.push_back(2);
@@ -248,10 +305,10 @@ cout << location.first << " " << location.second << " width: " << width_<< endl;
 
 
 	reverse(solution.begin(), solution.end());
-cout << "solution: size  " << solution.size() << endl;
-for (vector<int>::iterator it = solution.begin(); it != solution.end(); it++)
-	cout << *it << " ";
-cout << endl;
+//cout << "solution: size  " << solution.size() << endl;
+//for (vector<int>::iterator it = solution.begin(); it != solution.end(); it++)
+//	cout << *it << " ";
+//cout << endl;
 	return solution;
 }
 
@@ -320,10 +377,11 @@ PNG* SquareMaze::drawMazeWithSolution (){
 	int posy = 5;
 // solution vector
 	vector<int> solution = solveMaze();
-// iterate solution vector
-for (vector<int>::iterator it = solution.begin(); it != solution.end(); it++){
-}
 
+//for (vector<int>::iterator it = solution.begin(); it != solution.end(); it++){
+//}
+
+// iterate solution vector
 	for (int element : solution){
 //		HSLAPixel& temp = picture->getPixel(posx, posy);
 // color path red
@@ -346,6 +404,18 @@ for (vector<int>::iterator it = solution.begin(); it != solution.end(); it++){
 				posy--;
 			}
 		}
+	}
+	posy = posy+5;
+	posx = posx - 4;
+// draw the exit
+cout << "height_: " << height_ << endl;
+	for (int k = 0; k < 9; k++){	
+cout << posx + k << " " << posy << endl;
+		HSLAPixel& ending = picture->getPixel(posx + k, posy);
+		ending.h = 0;
+		ending.s = 0;
+		ending.l = 1;
+		ending.a = 1;
 	}
 	return picture;
 
