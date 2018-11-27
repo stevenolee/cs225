@@ -11,8 +11,19 @@ public:
 // constructor 
 SquareMaze();
 
+~SquareMaze();
+
+// bfs search returning the distances vector
+std::vector<int> bfs ();
+
+// turns address into coordinate
+std::pair<int, int> coordinate (int address);
+
 // check if there are any loops
 bool loops (int position, int dir);
+
+// check if going on border
+bool isBorder (int position, int dir);
 
 // Makes a new SquareMaze of the given height and width
 void makeMaze (int width, int height);

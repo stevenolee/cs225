@@ -2,6 +2,8 @@
 #include "cs225/HSLAPixel.h"
 #include <iostream>
 #include <stdlib.h>
+#include <queue>
+#include <algorithm>
 
 using namespace std;
 using cs225::PNG;
@@ -10,33 +12,25 @@ using cs225::HSLAPixel;
 SquareMaze::SquareMaze(){
 	width_ = 0;
 	height_ = 0;	
+}
 
-/*
-	width_ = 0;
-	height_ = 0;
-	maze.clear();
-// initialize all of the maze coordinates
-	for (int i = 0; i < width_; i++){
-		for (int j = 0; j < height_; j++){
-			maze[std::pair<int, int>(i, j)] = false;
-		}
-	}
-	disjoint.addelements(width_*height_);
-*/
+SquareMaze::~SquareMaze(){
+	disjoint.clear();
 }
 
 bool SquareMaze::loops(int position, int dir){
 	int next = position;
-	if (dir == 0){
+	std::pair<int, int> coor = coordinate(position);
+	if (dir == 0 && !isBorder(position, 0)){
 		next++;
 	}
-	else if (dir == 1){
+	else if (dir == 1 && !isBorder(position, 1)){
 		next += height_;
 	}
-	else if (dir == 2){
+	else if (dir == 2 && !isBorder(position, 2)){
 		next--;
 	}
-	else {
+	else if (dir == 3 && !isBorder(position, 3)){
 		next -= height_;
 	}
 // if they have the same parents aka are in the same set, there will be a loop
@@ -44,6 +38,30 @@ bool SquareMaze::loops(int position, int dir){
 		return true;
 	}
 	return false;
+}
+
+bool SquareMaze::isBorder(int position, int dir){
+// check right border
+	if ((position + 1) % width_ == 0 && dir == 0){
+		return true;
+	}
+
+// check bottom border 
+	if (position + width_ >= height_*width_ && dir == 1){
+		return true;
+	}
+
+// check left border
+	if (position % width_ == 0 && dir == 2){
+		return true;
+	}
+
+// check top border
+	if (position < width_ && dir == 3){
+		return true;
+	}
+	return false;
+
 }
 
 void SquareMaze::makeMaze (int width, int height){
@@ -62,9 +80,12 @@ void SquareMaze::makeMaze (int width, int height){
 		for (int y = 0; y < height_; y++){
 			for (int x = 0; x < width_; x++){
 				int position = y*height_ + x;
+				if (position == height_*width_ - 1){
+					break;
+				}
 				int next = position;
 				int random = rand() % 4;
-				while (!canTravel(x, y, random) && loops(position, random)){
+				while (isBorder(position, random) || loops(position, random)){
 					random = rand() % 4;
 				}
 				int opposite = (random + 2) % 4;
@@ -94,22 +115,6 @@ void SquareMaze::makeMaze (int width, int height){
 			}
 		}
 	}
-	
-/*
-	width_ = width;
-	height_ = height;
-	maze.clear();
-// initialize all of the maze coordinates
-	for (int i = 0; i < width_; i++){
-		for (int j = 0; j < height_; j++){
-			maze[std::pair<int, int>(i, j)] = false;
-		}
-	}
-// clear disjoint set
-	disjoint.clear();
-// add elements to disjoint set
-	disjoint.addelements(width_*height_);
-*/
 }
 
 bool SquareMaze::canTravel (int x, int y, int dir) const{
@@ -131,64 +136,60 @@ bool SquareMaze::canTravel (int x, int y, int dir) const{
 		return false;
 	}
 	return true;
-
-/*
-// update the coordinates
-	if (dir == 0){
-		x++;
-	}
-	else if (dir == 1){
-		y++;
-	}
-	else if (dir == 2){
-		x--;
-	}
-	else {
-		y--;
-	}
-// if out of x bounds
-	if (x < 0 || x >= width_){
-		return false;
-	}
-// if out of y bounds
-	if (y < 0 || y >= height_){
-		return false;
-	}
-// if next to a wall
-	map<std::pair<int, int>, bool>::const_iterator it;
-	it = maze.find(std::pair<int, int>(x, y));
-// if the coordinate is not found
-	if (it == maze.end()){
-		return false;
-	}
-// cannot travel there if it is a wall
-	if (it->second){
-		return false;
-	}
-	return true;
-*/
 }
 
 void SquareMaze::setWall (int x, int y, int dir, bool exists){
 // knock out the walls from both sides
 	int position = x + y*height_;
 	walls[position][dir] = exists;
-/*
-// update the coordinates
-	if (dir == 0){
-		x++;
+}
+
+std::pair<int, int> SquareMaze::coordinate(int address){
+	int count = 0;
+	while (address >= width_){
+		address -= width_;
+		count++; 
 	}
-	else if (dir == 1){
-		y++;
+	return std::pair<int, int> (address, count);
+}
+
+vector<int> SquareMaze::bfs(){
+	vector<int> distances(height_*width_);
+	distances[0] = 0;
+	queue<int> q;
+	vector<bool> visited(height_*width_, false);
+	visited[0] = true;
+	q.push(0);
+	while (!q.empty()){
+		int address = q.front();
+		q.pop();
+		std::pair<int, int> coor = coordinate(address);
+// if can travel right
+		if (canTravel(coor.first, coor.second, 0) && !visited[address + 1]){
+			q.push(address + 1);
+			distances[address + 1] = distances[address] + 1; 
+			visited[address + 1] = true;
+		}
+// if can travel down
+		if (canTravel(coor.first, coor.second, 1) && !visited[address + width_]){
+			q.push(address + width_);
+			distances[address + width_] = distances[address] + 1;
+			visited[address + width_] = true;
+		}
+// if can travel left
+		if (canTravel(coor.first, coor.second, 2) && !visited[address - 1]){
+			q.push(address - 1);
+			distances[address - 1] = distances[address] + 1;
+			visited[address - 1] = true;
+		}
+// if can travel up
+		if (canTravel(coor.first, coor.second, 3) && !visited[address - width_]){
+			q.push(address - width_);
+			distances[address - width_] = distances[address] + 1;
+			visited[address - width_] = true;
+		}
 	}
-	else if (dir == 2){
-		x--;
-	}
-	else {
-		y--;
-	}
-	maze[std::pair<int, int>(x, y)] = exists;
-*/
+	return distances;
 }
 
 vector<int> SquareMaze::solveMaze (){
@@ -196,40 +197,83 @@ vector<int> SquareMaze::solveMaze (){
 // 2. check bottom row, which has highest distance 
 // 3. trace back (distance--)
 // 4. vector.reverse(); ?
+	vector<int> solution;
+	vector<int> distances = bfs();
+// exit is the location of the exit in the array
+	int exit = (height_-1) * width_;
+	for (int i = 0; i < width_; i++){
+		int offset = (height_-1) * width_;
+		if (distances[offset + i] > distances[exit]){
+			exit = offset + i;
+		}
+	}
 
+// use start and endpoints to find the path
+	int curDistance = distances[exit];
+	while (curDistance != 0){
+		std::pair<int, int> location = coordinate(exit);
+// check adjacent cells to backtrack
+// check right
+		if (canTravel(location.first, location.second, 0) && distances[exit + 1] == curDistance - 1){
+			solution.push_back(2);
+			exit++;
+			curDistance--;
+		}
+// check bottom
+		else if (canTravel(location.first, location.second, 1) && distances[exit + width_] == curDistance - 1){
+			solution.push_back(3);
+			exit += width_;
+			curDistance--;
+		}
+// check left
+		else if (canTravel(location.first, location.second, 2) && distances[exit - 1] == curDistance - 1){
+			solution.push_back(0);
+			exit--;
+			curDistance--;
+		}
+// above
+		else {
+			solution.push_back(1);
+			exit -= width_;
+			curDistance--;
+		}
+	}
 
-
-
-
-	return vector<int>();
+	reverse(solution.begin(), solution.end());
+	return solution;
 }
+
 
 PNG* SquareMaze::drawMaze () const{
 	PNG* pic = new PNG(width_*10 + 1, height_*10 + 1);
 // blacken topmost row except entrance
 	for (auto i = 0; i < width_; i++){
+		for (int k = 0; k <= 10; k++){
 // continue if entrance
-		if (i >= 1 && i <= 9){
-			continue;
+			if (i == 0 && k >= 1 && k <= 9){
+				continue;
+			}
+			HSLAPixel& pixel = pic->getPixel(i*10 + k, 0);
+			pixel.h = 0;
+			pixel.s = 0;
+			pixel.l = 0;
+			pixel.a = 1;
 		}
-		HSLAPixel& pixel = pic->getPixel(i, 0);
-		pixel.h = 0;
-		pixel.s = 0;
-		pixel.l = 0;
-		pixel.a = 1;
 	}
 // blacken leftmost column
 	for (auto j = 0; j < height_; j++){
-		HSLAPixel& pixel = pic->getPixel(0, j);
-		pixel.h = 0;
-		pixel.s = 0;
-		pixel.l = 0;
-		pixel.a = 1;
+		for (int k = 0; k <= 10; k++){
+			HSLAPixel& pixel = pic->getPixel(0, j*10 + k);
+			pixel.h = 0;
+			pixel.s = 0;
+			pixel.l = 0;
+			pixel.a = 1;
+		}
 	}
 
 // draw walls
-	for (int w = 1; w < width_-1 ; w++){
-		for (int h = 1; h < height_-1 ; h++){
+	for (int w = 0; w < width_ ; w++){
+		for (int h = 0; h < height_ ; h++){
 
 // if cannot travel right, color black
 			if (!canTravel(w, h, 0)){
@@ -255,60 +299,6 @@ PNG* SquareMaze::drawMaze () const{
 	}
 
 	return pic;
-
-
-
-/*
-	PNG* pic = new PNG(width_*10 + 1, height_*10 + 1);
-// blacken topmost row except entrance
-	for (auto i = 0; i < width_; i++){
-// continue if entrance
-		if (i >= 1 && i <= 9){
-			continue;
-		}
-		HSLAPixel& pixel = pic->getPixel(i, 0);
-		pixel.h = 0;
-		pixel.s = 0;
-		pixel.l = 0;
-		pixel.a = 1;
-	}
-// blacken leftmost column
-	for (auto j = 0; j < height_; j++){
-		HSLAPixel& pixel = pic->getPixel(0, j);
-		pixel.h = 0;
-		pixel.s = 0;
-		pixel.l = 0;
-		pixel.a = 1;
-	}
-// draw walls
-	for (int w = 1; w < width_-1 ; w++){
-		for (int h = 1; h < height_-1 ; h++){
-
-// if right has wall, color black
-			if (!canTravel(w, h, 0)){
-				for (int k = 0; k <= 10; k++){
-					HSLAPixel& curPixel = pic->getPixel((w+1)*10,h*10+k);
-					curPixel.h = 0;
-					curPixel.s = 0;
-					curPixel.l = 0;
-					curPixel.a = 1;
-				}
-			}
-// if bottom has wall, color black
-			if (!canTravel(w, h, 1)){
-				for (int k = 0; k <= 10; k++){
-					HSLAPixel& curPixel = pic->getPixel(w*10+k, (h+1)*10);
-					curPixel.h = 0;
-					curPixel.s = 0;
-					curPixel.l = 0;
-					curPixel.a = 1;
-				}
-			}
-		}
-	}
-
-	return pic;
-*/
 }
 
 PNG* SquareMaze::drawMazeWithSolution (){
@@ -319,15 +309,18 @@ PNG* SquareMaze::drawMazeWithSolution (){
 // solution vector
 	vector<int> solution = solveMaze();
 // iterate solution vector
+for (vector<int>::iterator it = solution.begin(); it != solution.end(); it++){
+}
+
 	for (int element : solution){
-		HSLAPixel& temp = picture->getPixel(posx, posy);
+//		HSLAPixel& temp = picture->getPixel(posx, posy);
 // color path red
-		for (int i = 0; i <= 10; i++){
-			temp = picture->getPixel(posx, posy);
-			temp.h = 0;
-			temp.s = 1;
-			temp.l = 0.5;
-			temp.a = 1;
+		for (int i = 0; i < 10; i++){
+				HSLAPixel& temp = picture->getPixel(posx, posy);
+				temp.h = 0;
+				temp.s = 1;
+				temp.l = 0.5;
+				temp.a = 1;
 			if (element == 0){
 				posx++;
 			}
@@ -344,37 +337,4 @@ PNG* SquareMaze::drawMazeWithSolution (){
 	}
 	return picture;
 
-
-/*
-	PNG* picture = drawMaze();
-// positions x, y
-	int posx = 5;
-	int posy = 5;
-	
-// iterate solution vector
-	for (int element : solution){
-		HSLAPixel& temp = picture->getPixel(posx, posy);
-		for (int i = 0; i <= 10; i++){
-// color red
-			temp = picture->getPixel(posx, posy);
-			temp.h = 0;
-			temp.s = 1;
-			temp.l = 0.5;
-			temp.a = 1;
-			if (element == 0){
-				posx++;
-			}
-			else if (element == 1){
-				posy++;
-			}
-			else if (element == 2){
-				posx--;
-			}
-			else {
-				posy--;
-			}
-		}
-	}
-	return picture;
-*/
 }

@@ -233,10 +233,14 @@ TEST_CASE("testSolveMazeValidPath", "[weight=10][part2]")
 
 TEST_CASE("testSolutionBottomRow", "[weight=10][part2]")
 {
+cout << "one___" << endl;
 	SquareMaze maze;
+cout << "two___" << endl;
 	MazeReader soln = READ_SOLUTION_MAZE("testSolutionBottomRow",15, 15);
+cout << "three___" << endl;
 	copyMaze(soln, &maze);
 	vector<int> solution = maze.solveMaze();
+cout << "four___" << endl;
 
 	int x = 0;
 	int y = 0;
