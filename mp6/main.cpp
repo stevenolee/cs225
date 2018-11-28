@@ -47,7 +47,7 @@ int main()
 		}
 	}
 	for (int i = 211; i < 400; i++){	
-		for (int j = 400; j < 600; j++){
+		for (int j = 401; j < 600; j++){
 			HSLAPixel& pixel = output->getPixel(j, i);
 			pixel = HSLAPixel(0, 0, 1, 1);
 		}
