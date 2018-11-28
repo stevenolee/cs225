@@ -12,10 +12,97 @@ using cs225::HSLAPixel;
 SquareMaze::SquareMaze(){
 	width_ = 0;
 	height_ = 0;	
+//	srand(std::time(NULL));
 }
 
 SquareMaze::~SquareMaze(){
 	disjoint.clear();
+}
+
+void SquareMaze::blockI(int height, int width){
+	width_ = width;
+	height_ = height;
+// set up walls vector
+	vector<bool> inner (4, true);
+	walls.clear();
+	walls.resize(width_*height_, inner);
+// set up dset disjoint
+	disjoint.clear();
+	disjoint.addelements(height_*width_);
+
+
+
+	for (int h = 20; h <= 40; h++){
+		for (int w = 0; w <= 20; w++){
+			int position = h*width_ + w;
+			disjoint.setunion(0, position);
+		}
+	}
+	for (int h = 20; h <= 40; h++){
+		for (int w = 40; w <= 60; w++){
+			int position = h*width_ + w;
+			disjoint.setunion(0, position);
+		}
+	}
+
+
+
+// delete random walls
+// stop when the disjoint set tree is a height of 1, aka when size of root == total number of cells
+	while (disjoint.size(0) != height_*width_){
+		for (int y = 0; y < height_; y++){
+			for (int x = 0; x < width_; x++){
+				int position = y*width_ + x;
+				if (disjoint.find(position) == 0){continue;}
+				if (position == height_*width_ - 1){
+					break;
+				}
+				int next = position;
+				int random = rand() % 4;
+				int count = 0;
+				int flag = false;
+				while (isBorder(position, random) || loops(position, random)){
+					random = (random + 1)%4;
+					count++;
+					if (count == 4){
+						flag = true;
+						break;
+					}
+				}
+				if (flag){
+cout << "X . Y " << x << " " << y << endl;
+					continue;
+				}
+//				int opposite = (random + 2) % 4;
+// remove wall at the random direction
+				walls[position][random] = false;
+// remove wall from the opposite side
+				if (random == 0){
+					next++;
+					walls[next][2] = false;
+					disjoint.setunion(position, next);
+				}
+				else if (random == 1){
+					next += width_;
+					walls[next][3] = false;
+					disjoint.setunion(position, next);
+				}
+				else if (random == 2){
+					next--;
+					walls[next][0] = false;
+					disjoint.setunion(position, next);
+				}
+				else if (random == 3){
+					next -= width_;
+					walls[next][1] = false;
+					disjoint.setunion(position, next);
+				}
+
+			}
+		}
+	}
+
+
 }
 
 bool SquareMaze::loops(int position, int dir){
@@ -64,6 +151,7 @@ bool SquareMaze::isBorder(int position, int dir){
 
 }
 
+
 void SquareMaze::makeMaze (int width, int height){
 	width_ = width;
 	height_ = height;
@@ -71,9 +159,6 @@ void SquareMaze::makeMaze (int width, int height){
 	vector<bool> inner (4, true);
 	walls.clear();
 	walls.resize(width_*height_, inner);
-
-
-
 // set up dset disjoint
 	disjoint.clear();
 	disjoint.addelements(height_*width_);
@@ -89,9 +174,17 @@ void SquareMaze::makeMaze (int width, int height){
 				}
 				int next = position;
 				int random = rand() % 4;
+				int count = 0;
+				bool flag = false;
 				while (isBorder(position, random) || loops(position, random)){
-					random = rand() % 4;
+					random = (random+1)%4;
+					count++;
+					if (count == 4){
+						flag = true;
+						break;
+					}
 				}
+				if (flag){continue;}
 //				int opposite = (random + 2) % 4;
 // remove wall at the random direction
 				walls[position][random] = false;
@@ -117,12 +210,6 @@ void SquareMaze::makeMaze (int width, int height){
 					disjoint.setunion(position, next);
 				}
 
-
-//cout << "wall info at coordinate " << x << " " << y << " for make maze: ";
-//for (vector<bool>::iterator it = walls[position].begin(); it != walls[position].end(); it++){
-//	cout << *it << " ";
-//}
-//cout << endl;
 			}
 		}
 	}
@@ -186,12 +273,14 @@ void SquareMaze::setWall (int x, int y, int dir, bool exists){
 }
 
 std::pair<int, int> SquareMaze::coordinate(int address){
-	int count = 0;
+/*	int count = 0;
 	while (address >= width_){
 		address -= width_;
 		count++; 
 	}
 	return std::pair<int, int> (address, count);
+*/
+	return std::pair<int, int> (address%width_, address/width_);
 }
 
 vector<int> SquareMaze::bfs(){

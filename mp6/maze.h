@@ -13,6 +13,9 @@ SquareMaze();
 
 ~SquareMaze();
 
+// prepare block I
+void blockI(int height, int width);
+
 // bfs search returning the distances vector
 std::vector<int> bfs ();
 
