@@ -13,6 +13,10 @@ SquareMaze();
 
 ~SquareMaze();
 
+bool isEdge(int x, int y, int dir);
+
+
+
 // prepare block I
 void blockI(int height, int width);
 

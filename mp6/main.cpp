@@ -5,6 +5,7 @@
 
 using namespace std;
 using cs225::PNG;
+using cs225::HSLAPixel;
 
 int main()
 {
@@ -38,6 +39,21 @@ int main()
 	}
 	maze.solveMaze();
 	PNG* output = maze.drawMazeWithSolution();
+	
+	for (int i = 210; i < 400; i++){	
+		for (int j = 0; j < 200; j++){
+			HSLAPixel& pixel = output->getPixel(j, i);
+			pixel = HSLAPixel(0, 0, 1, 1);
+		}
+	}
+	for (int i = 210; i < 400; i++){	
+		for (int j = 400; j < 600; j++){
+			HSLAPixel& pixel = output->getPixel(j, i);
+			pixel = HSLAPixel(0, 0, 1, 1);
+		}
+	}
+
+
 	output->writeToFile("./creative.png");
 
     return 0;

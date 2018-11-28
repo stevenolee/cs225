@@ -18,6 +18,26 @@ SquareMaze::~SquareMaze(){
 	disjoint.clear();
 }
 
+bool SquareMaze::isEdge(int x, int y, int dir){/*
+	if ((x <= 20 || x >= 40) && (y == 20 || y == 40)){
+		if (y == 20 && dir == 1){
+			return true;
+		}		
+		if (y == 40 && dir == 3){
+			return true;
+		}
+	}
+	if ((y >= 20 && y <= 40) && (x == 20|| x == 40)){
+		if (x == 20 && dir == 2{
+			return true;
+		}
+		if (y == 40 && dir == 3){
+			return true;
+		}
+	}*/
+	return false;
+}
+
 void SquareMaze::blockI(int height, int width){
 	width_ = width;
 	height_ = height;
@@ -28,8 +48,7 @@ void SquareMaze::blockI(int height, int width){
 // set up dset disjoint
 	disjoint.clear();
 	disjoint.addelements(height_*width_);
-
-
+cout << "OG SIZE " << disjoint.size(0) << endl;
 
 	for (int h = 20; h <= 40; h++){
 		for (int w = 0; w <= 20; w++){
@@ -43,35 +62,32 @@ void SquareMaze::blockI(int height, int width){
 			disjoint.setunion(0, position);
 		}
 	}
-
-
-
+cout << "SIZE " << disjoint.size(0) << endl;
 // delete random walls
 // stop when the disjoint set tree is a height of 1, aka when size of root == total number of cells
 	while (disjoint.size(0) != height_*width_){
 		for (int y = 0; y < height_; y++){
 			for (int x = 0; x < width_; x++){
 				int position = y*width_ + x;
-				if (disjoint.find(position) == 0){continue;}
 				if (position == height_*width_ - 1){
 					break;
+				}
+				if (disjoint.find(position) == disjoint.find(0)){
+					continue;
 				}
 				int next = position;
 				int random = rand() % 4;
 				int count = 0;
-				int flag = false;
+				bool flag = false;
 				while (isBorder(position, random) || loops(position, random)){
-					random = (random + 1)%4;
+					random = (random+1)%4;
 					count++;
 					if (count == 4){
 						flag = true;
 						break;
 					}
 				}
-				if (flag){
-cout << "X . Y " << x << " " << y << endl;
-					continue;
-				}
+				if (flag){continue;}
 //				int opposite = (random + 2) % 4;
 // remove wall at the random direction
 				walls[position][random] = false;
@@ -100,7 +116,6 @@ cout << "X . Y " << x << " " << y << endl;
 			}
 		}
 	}
-
 
 }
 
