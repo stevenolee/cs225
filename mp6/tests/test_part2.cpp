@@ -187,7 +187,7 @@ TEST_CASE("testMakeMazeRandom", "[weight=10][part2]")
 	//sleep(2);
 	SquareMaze maze2;
 	maze2.makeMaze(50, 50);
-PNG * temp = p;
+	delete p;
 	p = maze2.drawMaze();
   bool same = true;
 
@@ -211,7 +211,6 @@ PNG * temp = p;
 	else
 		FAIL("Generated the same 50x50 maze twice");
 delete p;
-delete temp;
 }
 
 TEST_CASE("testSolveMazeValidPath", "[weight=10][part2]")
