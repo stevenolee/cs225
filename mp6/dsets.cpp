@@ -28,6 +28,9 @@ int DisjointSets::find (int elem){
 void DisjointSets::setunion (int a, int b){
 	int fa = find(a);
 	int fb = find(b);
+	if (fa == fb){
+		return;
+	}
 	int newSize = dset[fa] + dset[fb];
 	if (dset[fa] < dset[fb]){
 		dset[fb] = fa;
