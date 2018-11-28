@@ -12,7 +12,6 @@ using cs225::HSLAPixel;
 SquareMaze::SquareMaze(){
 	width_ = 0;
 	height_ = 0;	
-//	srand(std::time(NULL));
 }
 
 SquareMaze::~SquareMaze(){
