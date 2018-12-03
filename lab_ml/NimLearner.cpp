@@ -26,6 +26,53 @@
  */
 NimLearner::NimLearner(unsigned startingTokens) : g_(true, true) {
     /* Your code goes here! */
+//	srand(time(NULL));
+	for (int i = startingTokens; i > 0; i--){
+		string one = "p1-" + to_string(i);
+		if (!g_.vertexExists(one)){
+			g_.insertVertex(one);
+		}
+
+		if (one == "p1-" + to_string(startingTokens)){
+			startingVertex_ = one;
+		}
+
+		string two = "p2-" + to_string(i);
+		if (!g_.vertexExists(two)){
+			g_.insertVertex(two);
+		}
+// for p1
+		for (int j = 1; j < 3; j++){
+			if (i - j >= 0){
+				string next = "p1-" + to_string(i - j);
+				if (!g_.vertexExists(next)){
+					g_.insertVertex(next);
+				}
+// insert edge from old to new
+				if (!g_.edgeExists(two, next)){
+					g_.insertEdge(two, next);
+					g_.setEdgeWeight(two, next, 0);
+				}
+			}
+		}
+
+// for p2
+		for (int j = 1; j < 3; j++){
+			if (i - j >= 0){
+				string next = "p2-" + to_string(i - j);
+				if (!g_.vertexExists(next)){
+					g_.insertVertex(next);
+				}
+// insert edge from old to new
+				if (!g_.edgeExists(one, next)){
+					g_.insertEdge(one, next);
+					g_.setEdgeWeight(one, next, 0);
+				}
+			}
+		}
+
+	}
+
 }
 
 /**
@@ -40,6 +87,22 @@ NimLearner::NimLearner(unsigned startingTokens) : g_(true, true) {
 std::vector<Edge> NimLearner::playRandomGame() const {
   vector<Edge> path;
  /* Your code goes here! */
+	Vertex current = startingVertex_;
+	vector<Vertex> adj = g_.getAdjacent(current);
+	while (!adj.empty()){
+		int way = (rand() % 2);
+		if (adj.size() != 1){
+			path.push_back(g_.getEdge(current, adj[way]));
+			current = adj[way];
+		}
+		else {
+			path.push_back(g_.getEdge(current, adj[0]));
+			current = adj[0];
+		}
+
+		adj.clear();
+		adj = g_.getAdjacent(current);
+	}	
   return path;
 }
 
@@ -61,6 +124,47 @@ std::vector<Edge> NimLearner::playRandomGame() const {
  */
 void NimLearner::updateEdgeWeights(const std::vector<Edge> & path) {
  /* Your code goes here! */
+	Edge last = path[path.size() - 1];
+	Vertex loser = last.dest;
+	int count = 0;
+	if (loser == "p2-0"){
+// p1 won
+		count = 1;
+	} else {
+// p2 won
+		count = 0;
+	}
+
+	for (Edge it : path){
+		Vertex first = it.source;
+		Vertex next = it.dest;
+//		int weight = g_.getEdgeWeight(first, next);
+		int weight = it.getWeight();
+		if (count % 2){
+			weight++;
+		} else {
+			weight--;
+		}
+		g_.setEdgeWeight(first, next, weight);
+		count++;
+	}
+
+/*
+	vector<Edge>::const_iterator it = path.begin();
+	for (; it != path.end(); it++){
+		Vertex first = it->source;
+		Vertex next = it->dest;
+//		int weight = g_.getEdgeWeight(first, next);
+		int weight = it->getWeight();
+		if (count % 2){
+			weight++;
+		} else {
+			weight--;
+		}
+		g_.setEdgeWeight(first, next, weight);
+		count++;
+	}
+*/
 }
 
 /**
