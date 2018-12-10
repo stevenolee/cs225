@@ -9,6 +9,6 @@ Could Steve name his company "Orange"? No, his pet dog doesn't like citrus.
 # solee2-chips
 He sees a bag of chips! So temptign to eat, but he is on a diet. Steve finds no inspiration from a bag of chips.
 
-#solee2-banana
+# solee2-banana
 Could Steve name his company "Banana"? No, that's too long.
 

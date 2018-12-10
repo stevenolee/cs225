@@ -4,14 +4,14 @@
 
 #include <string>
 #include <iostream>
-
+using namespace std;
 /**
 * @return The number of vertices in the Graph
 */
 template <class V, class E>
 unsigned int Graph<V,E>::size() const {
   // TODO: Part 2
-  return 0;
+  return vertexMap.size();
 }
 
 
@@ -22,7 +22,17 @@ unsigned int Graph<V,E>::size() const {
 template <class V, class E>
 unsigned int Graph<V,E>::degree(const V & v) const {
   // TODO: Part 2
-  return 0;
+	string str;
+	for (auto it : vertexMap){
+		if (it->second == v){
+			string str = it->second;
+		}
+	}
+	typename std::unordered_map<string, list<edgeListIter>>::iterator edgeIterator = adjList.find(str);
+	if (edgeIterator == adjList.end()){
+		return 0;
+	}	
+	return edgeIterator->second.size();
 }
 
 

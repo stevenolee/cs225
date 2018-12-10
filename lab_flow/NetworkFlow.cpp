@@ -6,11 +6,14 @@
 #include <vector>
 #include <algorithm>
 #include <set>
-
+#include <climits>
 #include "graph.h"
 #include "edge.h"
 
 #include "NetworkFlow.h"
+
+using std::vector;
+
 
 int min(int a, int b) {
   if (a<b)
@@ -20,8 +23,64 @@ int min(int a, int b) {
 
 NetworkFlow::NetworkFlow(Graph & startingGraph, Vertex source, Vertex sink) :
   g_(startingGraph), residual_(Graph(true,true)), flow_(Graph(true,true)), source_(source), sink_(sink) {
-
   // YOUR CODE HERE
+	vector<Vertex> vertices_ = g_.getVertices();
+	vector<Edge> edges_ = g_.getEdges();
+	if (vertices_.empty()){
+		return;
+	}	
+
+	for (auto it : vertices_){
+		residual_.insertVertex(it);
+		flow_.insertVertex(it);
+	}	
+	for (auto it : edges_){
+		residual_.insertEdge(it.source, it.dest);
+		residual_.setEdgeWeight(it.source, it.dest, it.getWeight());
+		residual_.insertEdge(it.dest, it.source);
+		residual_.setEdgeWeight(it.dest, it.source, 0);
+		
+		flow_.insertEdge(it.source, it.dest);
+		flow_.setEdgeWeight(it.source, it.dest, 0);
+	}
+
+/*
+	vector<Vertex> path;	
+	findAugmentingPath(source_, sink_, path);
+	if (path.empty()){
+		return;
+	}
+// flow capacity
+	int cap = pathCapacity(path);
+// if there is a path, get the edge weights and update the flow and residual graph
+	for (int unsigned long i = 0; i < path.size() - 2; i++){
+// update flow_
+		int fWeight = flow_.getEdgeWeight(path[i], path[i+1]);
+		flow_.setEdgeWeight(path[i], path[i+1], fWeight+cap);
+// update residual_
+		int rWeight = residual_.getEdgeWeight(path[i], path[i+1]);
+		int oppositeWeight = residual_.getEdgeWeight(path[i+1], path[i]);
+// get original graph edge weight
+		int weightLimit = g_.getEdgeWeight(path[i], path[i+1]);
+		if (weightLimit == Graph::InvalidWeight){
+			weightLimit = g_.getEdgeWeight(path[i+1], path[i]);
+		}	
+// check if new edge weight surpasses the limit
+		if (rWeight - cap >= 0){
+			residual_.setEdgeWeight(path[i], path[i+1], rWeight - cap);
+		}
+		else {
+			residual_.setEdgeWeight(path[i], path[i+1], 0);
+		}
+
+		if (oppositeWeight + cap <= weightLimit){
+			residual_.setEdgeWeight(path[i+1], path[i], oppositeWeight + cap);
+		}
+		else {
+			residual_.setEdgeWeight(path[i+1], path[i], weightLimit);
+		}
+	}
+	*/
 }
 
   /**
@@ -84,7 +143,20 @@ bool NetworkFlow::findAugmentingPath(Vertex source, Vertex sink, std::vector<Ver
 
 int NetworkFlow::pathCapacity(const std::vector<Vertex> & path) const {
   // YOUR CODE HERE
-  return 0;
+	
+	if (path.size() <= 1){
+		return 0;
+	}
+
+	int limit = INT_MAX;
+	for (unsigned long i = 0; i < path.size() - 1; i++){
+		int currWeight = residual_.getEdgeWeight(path[i], path[i+1]);
+		if (currWeight < limit){
+			limit = currWeight;
+		}
+	}
+	
+  return limit;
 }
 
   /**
@@ -97,6 +169,39 @@ int NetworkFlow::pathCapacity(const std::vector<Vertex> & path) const {
 
 const Graph & NetworkFlow::calculateFlow() {
   // YOUR CODE HERE
+	vector<Vertex> vertices = g_.getVertices();
+	vector<Vertex> path;
+// if path is empty
+/*	if (path.empty()){
+		return ;
+	}*/
+	bool opposite = false;
+	int max = 0;
+	while (findAugmentingPath(source_, sink_, path)){
+// get pathCap
+		int pathCap = pathCapacity(path);
+		max += pathCap;
+		for (unsigned long i = 0; i < path.size() - 1; i++){
+			int currWeight = flow_.getEdgeWeight(path[i], path[i+1]);
+// if its the opposite way
+			if (currWeight == Graph::InvalidWeight){
+				currWeight = flow_.getEdgeWeight(path[i+1], path[i]);
+				opposite = true;
+			}
+			if (opposite){
+				flow_.setEdgeWeight(path[i+1], path[i], currWeight - pathCap);
+			}
+			else {
+				flow_.setEdgeWeight(path[i], path[i+1], currWeight + pathCap);
+			}
+// residual_
+			int forward = residual_.getEdgeWeight(path[i], path[i+1]);
+			residual_.setEdgeWeight(path[i], path[i+1], forward - pathCap);
+			int backward = residual_.getEdgeWeight(path[i+1], path[i]);
+			residual_.setEdgeWeight(path[i+1], path[i], backward + pathCap);
+		}
+	}
+	maxFlow_ = max;
   return flow_;
 }
 
