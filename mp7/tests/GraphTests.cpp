@@ -67,6 +67,35 @@ TEST_CASE("Graph::size returns the vertex count", "[weight=1]") {
   REQUIRE( g.size() == 5 );
 }
 
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+TEST_CASE("hello", "[weight=1]") {
+  Graph<Vertex, Edge> g;
+
+  g.insertVertex("a");
+  g.insertVertex("b");  
+  g.insertVertex("c");
+  g.insertVertex("d");
+  g.insertVertex("e");
+
+  REQUIRE( g.edges() == 0 );
+
+  Edge& e1 = g.insertEdge("a", "c");
+  g.insertEdge("b", "d");
+  Edge& e2 = g.insertEdge("a", "e");
+
+  REQUIRE( g.edges() == 3 );
+
+	list<reference_wrapper<Edge>> shit;
+	shit.push_back(e1);
+	shit.push_back(e2);
+	g.removeEdge(shit.begin());
+
+	REQUIRE( g.edges() == 1);
+}
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 TEST_CASE("Graph::edges::size returns the edge count", "[weight=1]") {
   Graph<Vertex, Edge> g;
 
