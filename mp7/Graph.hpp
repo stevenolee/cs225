@@ -61,13 +61,67 @@ V & Graph<V,E>::insertVertex(std::string key) {
 template <class V, class E>
 void Graph<V,E>::removeVertex(const std::string & key) {
   // TODO: Part 2
-	typename unordered_map<string, V &>::iterator it = vertexMap.find(key);
-// vertex did not exist
-	if (it == vertexMap.end()){
-		return;
+cout << "edgeList: " << endl;
+	for (auto it = edgeList.begin(); it != edgeList.end(); it++){
+cout << it->get().source() << " -> " << it->get().dest() << endl;
 	}
-// else remove
+
+cout << "adjList:" << endl;
+	for (auto it : adjList.at(key)){
+		cout << it->get().source().key() << " -> " << it->get().dest().key() << endl;
+	}
+
+
+// remove from vertexMap
 	vertexMap.erase(key);
+
+// remove from edgeList
+/*
+	for (auto it : edgeList){
+		if (it.get().source().key() == key || it.get().dest().key() == key){
+			edgeList.remove(it);
+		}
+	}
+*/
+
+	for (auto it = edgeList.begin(); it != edgeList.end(); it++){
+		string begin = it->get().source().key();
+		string end = it->get().dest().key();
+		if (key == begin || key == end){
+			edgeList.erase(it);
+//			break;
+		}
+	}
+
+
+
+// remove from adjList
+/*
+	for (auto it : adjList.at(key)){
+		if (it->get().source().key() == key || it->get().dest().key() == key){
+			adjList.at(key).remove(it);
+		}
+	}
+*/
+	for (auto iter : adjList.at(key)){
+		if (iter->get().source().key() == key || iter->get().dest().key() == key){
+//			iter.clear();
+			adjList.at(key).remove(iter);
+//			break;
+		}
+	}
+
+
+cout << "____________________________________" << endl;
+cout << "edgeList:" << endl;
+	for (auto it = edgeList.begin(); it != edgeList.end(); it++){
+cout << it->get().source() << " -> " << it->get().dest() << endl;
+	}
+cout << "adjList:" << endl;
+	for (auto it : adjList.at(key)){
+		cout << it->get().source().key() << " -> " << it->get().dest().key() << endl;
+	}
+
 }
 
 
@@ -118,7 +172,7 @@ cout << it->get().source() << " -> " << it->get().dest() << endl;
 		V end = it->get().dest();
 		if (v1 == begin && v2 == end){
 			edgeList.erase(it);
-			break;
+//			break;
 		}
 	}
 //	for (auto iter = adjList.at(key1).begin(); iter != adjList.at(key1).end(); iter++){
@@ -126,7 +180,7 @@ cout << it->get().source() << " -> " << it->get().dest() << endl;
 		if (iter->get().source().key() == key1 && iter->get().dest().key() == key2){
 //			iter.clear();
 			adjList.at(key1).remove(iter);
-			break;
+//			break;
 		}
 	}
 

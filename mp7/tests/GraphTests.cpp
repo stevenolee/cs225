@@ -85,11 +85,13 @@ TEST_CASE("hello", "[weight=1]") {
   Edge& e2 = g.insertEdge("a", "e");
 
   REQUIRE( g.edges() == 3 );
-
+/*
 	list<reference_wrapper<Edge>> shit;
 	shit.push_back(e1);
 	shit.push_back(e2);
 	g.removeEdge(shit.begin());
+*/
+	g.removeVertex("a");
 
 	REQUIRE( g.edges() == 1);
 }
