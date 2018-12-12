@@ -40,17 +40,21 @@ std::list<std::string> Graph<V,E>::shortestPath(const std::string start, const s
 		for (auto it : adjList.at(current)){
 			
 			string adj = it->get().dest().key();
-			if (adj == current){
-				adj = it->get().source().key();
+// check if the edge is directed
+			if (!it->get().directed()){
+				if (adj == current){
+					adj = it->get().source().key();
+				}
 			}
+
 // if the adjacent vertex has not been visited, then add to queue and update its previous vertex on the table map
 
 // only can traverse this edge if edge source is current vertex
-/*
-			if (it->get().source().key() != current){
+
+			if (adj == current){
 				continue;
 			}
-*/
+
 			if (!table.at(adj).second){
 				q.push(adj);
 				table.at(adj) = pair<string, bool>(current, true);
