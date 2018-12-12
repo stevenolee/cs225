@@ -209,9 +209,9 @@ void Graph<V,E>::removeEdge(const edgeListIter & it) {
   // TODO: Part 2
 	string key1 = it->get().source().key();
 	
-	for (auto it : adjList.at(key1)){
-		cout << it->get().source().key() << " -> " << it->get().dest().key() << endl;
-	}
+//	for (auto it : adjList.at(key1)){
+//		cout << it->get().source().key() << " -> " << it->get().dest().key() << endl;
+//	}
 
 	adjList.at(key1).clear();
 
@@ -225,10 +225,10 @@ void Graph<V,E>::removeEdge(const edgeListIter & it) {
 
 
 
-cout << "fucking shit" << endl;
-	for (auto it : adjList.at(key1)){
-		cout << it->get().source().key() << " -> " << it->get().dest().key() << endl;
-	}
+//cout << "fucking shit" << endl;
+//	for (auto it : adjList.at(key1)){
+//		cout << it->get().source().key() << " -> " << it->get().dest().key() << endl;
+//	}
 }
 
 
@@ -240,10 +240,26 @@ template <class V, class E>
 const std::list<std::reference_wrapper<E>> Graph<V,E>::incidentEdges(const std::string key) const {
   // TODO: Part 2
   std::list<std::reference_wrapper<E>> edges;
+
+/*
 	typename unordered_map<string, list<edgeListIter>>::const_iterator it = adjList.find(key);
 	for (auto iter : it->second){
 		edges.push_back(*iter);
 	}
+*/
+	for (auto it : adjList.at(key)){
+// check if edge destination is NOT the key
+		if (it->get().dest().key() != key){
+			edges.push_back(it->get());
+		}
+
+// check special case:
+// if destination is equal to key, it must not be a directed edge
+		if ((it->get().dest().key() == key) && !it->get().directed()){
+			edges.push_back(it->get());
+		}
+	}
+
 
   return edges;
 }
